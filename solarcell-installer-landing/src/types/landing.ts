@@ -15,5 +15,3 @@ export type ImpactMetric = {
   value: string;
   icon: 'panel' | 'users' | 'target' | 'globe';
 };
-
-export type ButtonVariant = 'primary' | 'secondary' | 'outline';

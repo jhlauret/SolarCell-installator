@@ -2,7 +2,7 @@ import { BatteryCharging, Check, Download, FileText, Play, PlayCircle, ShieldChe
 import type { ComponentType } from 'react';
 import type { LucideProps } from 'lucide-react';
 import { IconBadge } from '../../ui/IconBadge';
-import { clsxLite } from '../../ui/clsxLite';
+import { clsx } from '../../../../shared/ui/clsx';
 
 const courses: Array<{ title: string; desc: string; icon: ComponentType<LucideProps>; progress: number; done?: boolean }> = [
   { title: 'Sécurité sur les chantiers photovoltaïques', desc: 'Règles de sécurité essentielles pour travailler sur les installations solaires en toute sécurité.', icon: ShieldCheck, progress: 100, done: true },
@@ -84,7 +84,7 @@ function CourseStatus({ progress, done }: { progress: number; done?: boolean }) 
           <div className="mt-[10px] flex items-center gap-2">
             <span className="text-[11px] text-ink-700">{progress}%</span>
             <span className="h-[6px] w-[125px] overflow-hidden rounded-full bg-ink-200">
-              <span className={clsxLite('block h-full rounded-full bg-solar-500')} style={{ width: `${progress}%` }} />
+              <span className={clsx('block h-full rounded-full bg-solar-500')} style={{ width: `${progress}%` }} />
             </span>
           </div>
         </div>

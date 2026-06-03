@@ -1,5 +1,5 @@
 import { UserRoundCheck } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../../../shared/ui/Button';
 import { learningOutcomes } from '../data/trainingProgramData';
 
 export function LearningOutcomesSection() {
@@ -33,7 +33,7 @@ export function LearningOutcomesSection() {
             <p className="mt-1 text-sm font-medium leading-5 text-ink-700">
               Notre équipe est là pour vous accompagner.
             </p>
-            <Button className="mt-4 h-9 px-8 text-sm">Nous contacter</Button>
+            <Button size="md" className="mt-4 h-9 px-8 text-sm">Nous contacter</Button>
           </div>
           <div className="grid h-[72px] w-[72px] shrink-0 place-items-center rounded-full bg-solar-100 text-solar-700">
             <UserRoundCheck className="h-10 w-10" aria-hidden="true" />

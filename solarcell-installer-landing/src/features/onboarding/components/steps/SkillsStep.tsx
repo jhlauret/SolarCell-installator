@@ -1,10 +1,10 @@
 import { BatteryCharging, Cable, Check, Plus, SunMedium, SquareCheckBig } from 'lucide-react';
 import type { ComponentType } from 'react';
 import type { LucideProps } from 'lucide-react';
-import { Button } from '../../ui/Button';
+import { Button } from '../../../../shared/ui/Button';
 import { FieldShell, SelectField } from '../../ui/FormControls';
 import { IconBadge } from '../../ui/IconBadge';
-import { clsxLite } from '../../ui/clsxLite';
+import { clsx } from '../../../../shared/ui/clsx';
 
 const skills: Array<{ label: string; desc: string; icon: ComponentType<LucideProps>; level: 'Débutant' | 'Intermédiaire' | 'Avancé' | 'Expert' }> = [
   { label: 'Panneaux solaires', desc: 'Installation, fixation et raccordement de panneaux photovoltaïques.', icon: SunMedium, level: 'Avancé' },
@@ -58,7 +58,7 @@ export function SkillsStep() {
                     const checked = level === skill.level;
                     return (
                       <td key={level} className="text-center">
-                        <span className={clsxLite('mx-auto block h-[14px] w-[14px] rounded-full border', checked ? 'border-solar-600 bg-solar-100 ring-2 ring-solar-600 ring-offset-1' : 'border-ink-300 bg-white')} />
+                        <span className={clsx('mx-auto block h-[14px] w-[14px] rounded-full border', checked ? 'border-solar-600 bg-solar-100 ring-2 ring-solar-600 ring-offset-1' : 'border-ink-300 bg-white')} />
                       </td>
                     );
                   })}
@@ -85,7 +85,7 @@ export function SkillsStep() {
       <section>
         <h2 className="section-title">Certifications (optionnel)</h2>
         <p className="mt-2 text-[13px] text-ink-700">Ajoutez vos certifications ou habilitations en lien avec vos compétences.</p>
-        <Button variant="outline" className="mt-[14px] h-[34px] min-w-[170px] px-4 text-[12px] text-solar-700" leftIcon={<Plus size={16} />}>
+        <Button size="sm" variant="outline" className="mt-[14px] h-[34px] min-w-[170px] px-4 text-[12px] text-solar-700" leftIcon={<Plus size={16} />}>
           Ajouter une certification
         </Button>
       </section>

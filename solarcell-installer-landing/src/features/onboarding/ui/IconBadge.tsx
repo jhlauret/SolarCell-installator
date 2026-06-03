@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 import type { LucideProps } from 'lucide-react';
-import { clsxLite } from './clsxLite';
+import { clsx } from '../../../shared/ui/clsx';
 
 type IconBadgeProps = {
   icon: ComponentType<LucideProps>;
@@ -22,7 +22,7 @@ const iconSize = {
 
 export function IconBadge({ icon: Icon, size = 'md', className }: IconBadgeProps) {
   return (
-    <div className={clsxLite('grid shrink-0 place-items-center rounded-[9px] bg-solar-50 text-solar-600', sizeClass[size], className)}>
+    <div className={clsx('grid shrink-0 place-items-center rounded-[9px] bg-solar-50 text-solar-600', sizeClass[size], className)}>
       <Icon size={iconSize[size]} strokeWidth={2.1} />
     </div>
   );

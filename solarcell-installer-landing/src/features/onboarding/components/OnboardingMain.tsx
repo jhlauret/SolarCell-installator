@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../../../shared/ui/Button';
 import type { OnboardingStep } from '../types';
 import { PersonalStep } from './steps/PersonalStep';
 import { ProfessionalStep } from './steps/ProfessionalStep';
@@ -27,10 +27,10 @@ export function OnboardingMain({ currentStep, previousStep, nextStep, goNext, go
           <StepRenderer stepId={currentStep.id} />
         </div>
         <div className="mt-[28px] flex items-center justify-between">
-          <Button variant="outline" onClick={goPrevious} disabled={!previousStep} leftIcon={<ArrowLeft size={20} />}>
+          <Button size="sm" variant="outline" onClick={goPrevious} disabled={!previousStep} leftIcon={<ArrowLeft size={20} />}>
             Précédent
           </Button>
-          <Button onClick={goNext} rightIcon={nextStep ? <ArrowRight size={19} /> : <Check size={20} />}>
+          <Button size="sm" onClick={goNext} rightIcon={nextStep ? <ArrowRight size={19} /> : <Check size={20} />}>
             {nextStep ? 'Suivant' : "Terminer l’inscription"}
           </Button>
         </div>

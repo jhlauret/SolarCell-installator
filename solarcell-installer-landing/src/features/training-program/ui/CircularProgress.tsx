@@ -1,4 +1,4 @@
-import { clsx } from './clsx';
+import { clsx } from '../../../shared/ui/clsx';
 
 interface CircularProgressProps {
   value: number;

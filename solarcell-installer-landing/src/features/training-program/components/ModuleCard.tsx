@@ -1,7 +1,7 @@
 import { CheckCircle2, Clock3, FileText, PlaySquare, ClipboardCheck, type LucideIcon } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../../../shared/ui/Button';
 import { CircularProgress } from '../ui/CircularProgress';
-import { clsx } from '../ui/clsx';
+import { clsx } from '../../../shared/ui/clsx';
 import { moduleStatusLabels } from '../data/trainingProgramData';
 import { useTrainingProgressStore } from '../hooks/useTrainingProgressStore';
 import type { TrainingModule } from '../types/training';
@@ -57,7 +57,7 @@ export function ModuleCard({ module }: ModuleCardProps) {
           >
             {moduleStatusLabels[module.status]}
           </span>
-          <Button variant="ghost" className="h-auto px-2 py-1 text-solar-700" onClick={() => selectModule(module.id)}>
+          <Button size="md" variant="ghost" className="h-auto px-2 py-1 text-solar-700" onClick={() => selectModule(module.id)}>
             {module.actionLabel}
           </Button>
         </div>
