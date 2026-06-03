@@ -2,35 +2,24 @@ import type { LucideIcon } from 'lucide-react';
 
 export type ModuleStatus = 'completed' | 'in_progress' | 'not_started';
 
-export interface TrainingStat {
-  label: string;
-  value: string;
-  icon: LucideIcon;
-}
-
-export interface TrainingModuleMeta {
-  duration: string;
-  videos: string;
-  resources: string;
-  quiz: string;
-}
-
-export interface TrainingModule {
+export type TrainingModule = {
   id: string;
-  order: number;
+  courseKey: string;
+  route: string;
   label: string;
   title: string;
   description: string;
-  icon: LucideIcon;
-  bullets: string[];
-  meta: TrainingModuleMeta;
   progress: number;
   status: ModuleStatus;
-  actionLabel: string;
-}
+  duration: string;
+  videos: number;
+  resources: number;
+  bullets: string[];
+  icon: LucideIcon;
+};
 
-export interface LearningOutcome {
+export type LearningBenefit = {
   title: string;
   description: string;
   icon: LucideIcon;
-}
+};

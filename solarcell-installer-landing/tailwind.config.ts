@@ -33,6 +33,7 @@ export default {
           900: '#043d17',
         },
         ink: {
+          DEFAULT: '#07142f',
           50: '#f8fafc',
           100: '#edf2f7',
           950: '#09111f',
