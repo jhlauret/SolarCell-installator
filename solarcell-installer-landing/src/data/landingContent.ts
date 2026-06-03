@@ -2,7 +2,7 @@ import type { BenefitItem, ImpactMetric, NavItem } from '../types/landing';
 
 export const navItems: NavItem[] = [
   { label: 'Accueil', href: '#home', active: true },
-  { label: 'Le programme', href: '#program' },
+  { label: 'Le programme', href: '/formation' },
   { label: 'Avantages', href: '#benefits' },
   { label: 'Comment ça marche ?', href: '#how' },
   { label: 'FAQ', href: '#faq' },

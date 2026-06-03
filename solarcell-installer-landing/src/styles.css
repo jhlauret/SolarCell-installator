@@ -104,3 +104,31 @@ a {
     @apply text-[13px] leading-[1.62] text-ink-700;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Training program layer (ported from the formation page). Bespoke classes are
+ * scoped under `.training-page` because `.glass-card` and `.section-title`
+ * already exist globally (landing / onboarding) with different definitions;
+ * scoping keeps the training page pixel-faithful with zero regression.
+ * ------------------------------------------------------------------------- */
+@layer components {
+  .training-page .page-frame {
+    @apply mx-auto w-full max-w-[1440px] px-6 sm:px-8 lg:px-10;
+  }
+
+  .training-page .glass-card {
+    @apply rounded-2xl border border-ink-100 bg-white/[0.88] shadow-solar-soft backdrop-blur;
+  }
+
+  .training-page .small-chip {
+    @apply inline-flex items-center gap-2 rounded-xl border border-solar-200 bg-solar-50 px-3 py-2 text-sm font-semibold text-solar-700;
+  }
+
+  .training-page .section-title {
+    @apply text-[28px] font-extrabold leading-tight tracking-[-0.035em] text-ink-950;
+  }
+
+  .training-page .green-icon-tile {
+    @apply grid place-items-center rounded-2xl bg-solar-50 text-solar-600;
+  }
+}
