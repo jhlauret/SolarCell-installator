@@ -1,0 +1,59 @@
+{
+  "personal": {
+    "firstName": "Jean",
+    "lastName": "Dupont",
+    "birthDate": "1988-04-21",
+    "birthCountry": "FR",
+    "nationality": "FR",
+    "email": "jean.dupont@example.com",
+    "phone": "+33612345678",
+    "street": "12 rue de la Paix",
+    "zip": "75002",
+    "city": "Paris",
+    "country": "FR",
+    "language": "fr_FR",
+    "timezone": "Europe/Paris",
+    "privacyAccepted": true
+  },
+  "professional": {
+    "structureType": "ei",
+    "companyName": "Dupont Solar Services",
+    "siret": "12345678900012",
+    "vat": "FR12123456789",
+    "apeNaf": "4321A",
+    "street": "5 avenue des Installateurs",
+    "zip": "75015",
+    "city": "Paris",
+    "country": "FR",
+    "phone": "+33102030405",
+    "email": "contact@dupont-solar.example",
+    "creationYear": 2021,
+    "employeeRange": "1_5",
+    "mainActivity": "Installation et maintenance de systèmes photovoltaïques résidentiels et tertiaires."
+  },
+  "skills": {
+    "yearsExperience": "3_5",
+    "installationsRange": "10_50",
+    "skills": [
+      { "code": "panneaux_solaires", "label": "Panneaux solaires", "level": "advanced" },
+      { "code": "onduleurs", "label": "Onduleurs", "level": "intermediate" },
+      { "code": "batteries", "label": "Batteries", "level": "intermediate" },
+      { "code": "cables_cablage", "label": "Câbles & câblage", "level": "advanced" }
+    ]
+  },
+  "training": [
+    { "code": "pv_site_safety", "title": "Sécurité sur les chantiers photovoltaïques", "progress": 100, "status": "completed" },
+    { "code": "solar_panel_installation", "title": "Installation de panneaux solaires", "progress": 100, "status": "completed" },
+    { "code": "inverter_installation_configuration", "title": "Installation et configuration des onduleurs", "progress": 25, "status": "in_progress" }
+  ],
+  "contract": {
+    "acceptedTerms": true,
+    "version": "1.0",
+    "signatureProvider": "none"
+  },
+  "wallet": {
+    "walletType": "integrated",
+    "network": "solarcell",
+    "recoveryConfirmed": false
+  }
+}

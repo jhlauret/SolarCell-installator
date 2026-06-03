@@ -1,0 +1,14 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# TypeScript incremental build / emitted config artifacts
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# Logs and editor
+*.log
+.DS_Store

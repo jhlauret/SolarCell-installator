@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #10262d;
+  background: #f8fbf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.solar-page-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 83% 4%, rgba(183, 220, 249, 0.5) 0, transparent 30%),
+    linear-gradient(111deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 249, 247, 0.88) 38%, rgba(202, 230, 250, 0.58) 73%, rgba(230, 242, 252, 0.76) 100%);
+}
+
+.hero-soft-mask {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 27%, rgba(255,255,255,0.55) 48%, rgba(255,255,255,0.05) 68%, rgba(255,255,255,0) 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.04) 64%, rgba(249,250,246,0.95) 100%);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.91);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+@media (max-width: 900px) {
+  .hero-soft-mask {
+    background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.94));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Onboarding wizard layer (ported from the inscription flow). These tokens
+ * back the 7-step wizard at /onboarding/* and reuse the shared Tailwind theme.
+ * ------------------------------------------------------------------------- */
+:root {
+  --header-height: 99px;
+}
+
+::selection {
+  background: rgba(21, 154, 52, 0.18);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #9aa9b9;
+  border-radius: 999px;
+}
+
+@layer components {
+  .solar-container {
+    min-height: calc(100vh - var(--header-height));
+    @apply mx-auto grid max-w-[1536px] grid-cols-1 bg-page lg:grid-cols-[322px_minmax(640px,1fr)_360px];
+  }
+
+  .field-label {
+    @apply mb-2 block text-[12px] font-bold leading-none text-ink-900;
+  }
+
+  .input-base {
+    @apply h-[39px] w-full rounded-[7px] border border-ink-300 bg-white px-3 text-[14px] text-ink-900 outline-none transition placeholder:text-ink-500 focus:border-solar-500 focus:ring-4 focus:ring-solar-500/10;
+  }
+
+  .section-title {
+    @apply text-[18px] font-extrabold tracking-[-0.02em] text-ink-900;
+  }
+
+  .helper-text {
+    @apply text-[13px] leading-[1.62] text-ink-700;
+  }
+}
