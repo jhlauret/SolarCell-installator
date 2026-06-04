@@ -2,17 +2,30 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { InstallerLoginModal } from './components/InstallerLoginModal';
 import { useAuthModalStore } from './store/useAuthModalStore';
+import { useSessionStore } from './store/useSessionStore';
 
-vi.mock('./api/authApi', () => ({
-  loginWithEmail: vi.fn().mockResolvedValue({ applicationId: 1, partnerId: 2, identityId: 3 }),
-  googleLoginUrl: () => 'http://localhost:8787/api/auth/google',
-}));
+vi.mock('./api/authApi', async () => {
+  const actual = await vi.importActual<typeof import('./api/authApi')>('./api/authApi');
+  return {
+    ...actual,
+    loginWithEmail: vi.fn().mockResolvedValue({
+      applicationId: 1,
+      partnerId: 2,
+      identityId: 3,
+      user: { email: 'a@b.com', name: 'Jean Test' },
+    }),
+    googleLoginUrl: () => 'http://localhost:8787/api/auth/google',
+  };
+});
 
 import { loginWithEmail } from './api/authApi';
 
 describe('InstallerLoginModal', () => {
   beforeEach(() => {
-    act(() => useAuthModalStore.setState({ isOpen: false }));
+    act(() => {
+      useAuthModalStore.setState({ isOpen: false });
+      useSessionStore.setState({ user: null });
+    });
     vi.clearAllMocks();
   });
 
@@ -21,7 +34,7 @@ describe('InstallerLoginModal', () => {
     expect(screen.queryByText('Connexion installateur')).not.toBeInTheDocument();
   });
 
-  it("s'affiche à l'ouverture et envoie les identifiants au BFF", async () => {
+  it('connecte, stocke l’utilisateur et ferme le modal', async () => {
     render(<InstallerLoginModal />);
     act(() => useAuthModalStore.getState().open());
 
@@ -33,7 +46,9 @@ describe('InstallerLoginModal', () => {
     fireEvent.click(screen.getByRole('button', { name: /se connecter/i }));
 
     await waitFor(() => expect(loginWithEmail).toHaveBeenCalledWith({ email: 'a@b.com', password: 'secret123' }));
-    expect(await screen.findByText(/Connecté/)).toBeInTheDocument();
+    // Le modal se ferme et l'utilisateur est enregistré dans le store.
+    await waitFor(() => expect(screen.queryByText('Connexion installateur')).not.toBeInTheDocument());
+    expect(useSessionStore.getState().user).toMatchObject({ email: 'a@b.com', name: 'Jean Test', applicationId: 1 });
   });
 
   it('se ferme avec la touche Échap', async () => {

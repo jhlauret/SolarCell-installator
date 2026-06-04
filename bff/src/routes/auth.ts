@@ -35,7 +35,10 @@ authRouter.post('/login', async (req, res) => {
       provider: 'password',
       email_verified: true,
     });
-    return res.json(session);
+    return res.json({
+      ...session,
+      user: { email: user.email, name: user.displayName, picture: user.profilePicture },
+    });
   } catch (err: unknown) {
     const fbError = (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error?.message;
     const message = fbError ?? (err as Error)?.message ?? 'login_failed';
@@ -72,11 +75,21 @@ authRouter.post('/firebase/session', async (req, res) => {
       email_verified: decoded.email_verified,
       provider: decoded.firebase?.sign_in_provider,
     });
-    return res.json(session);
+    return res.json({
+      ...session,
+      user: { email: decoded.email ?? '', name: decoded.name as string | undefined, picture: decoded.picture },
+    });
   } catch (err: unknown) {
     return res.status(401).json({ error: 'invalid_token', message: (err as Error)?.message ?? 'Token invalide.' });
   }
 });
+
+/**
+ * Déconnexion. Aucune session serveur n'est conservée (l'état vit côté client),
+ * donc on confirme simplement. Point d'extension si une révocation de token
+ * Firebase/Google côté serveur devient nécessaire.
+ */
+authRouter.post('/logout', (_req, res) => res.json({ ok: true }));
 
 /**
  * Bouton "Continuer avec Google ID" — étape 1 : redirige vers le consentement
@@ -123,7 +136,16 @@ authRouter.get('/google/callback', async (req, res) => {
   try {
     const claims = await exchangeCodeForClaims(code);
     const session = await syncInstaller(claims);
-    return res.send(popupResultHtml({ type: 'solarcell-sso', ok: true, session }, origin));
+    return res.send(
+      popupResultHtml(
+        {
+          type: 'solarcell-sso',
+          ok: true,
+          session: { ...session, user: { email: claims.email, name: claims.name, picture: claims.picture } },
+        },
+        origin,
+      ),
+    );
   } catch (err: unknown) {
     return res.send(popupResultHtml({ type: 'solarcell-sso', ok: false, error: (err as Error)?.message ?? 'google_failed' }, origin));
   }

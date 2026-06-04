@@ -2,10 +2,11 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Button } from '../../../shared/ui/Button';
 import { GoogleGlyph } from './GoogleGlyph';
 import { useAuthModalStore } from '../store/useAuthModalStore';
-import { loginWithEmail, googleLoginUrl } from '../api/authApi';
-import type { InstallerSession } from '../types';
+import { useSessionStore } from '../store/useSessionStore';
+import { loginWithEmail, googleLoginUrl, toAuthUser } from '../api/authApi';
+import type { LoginResponse } from '../types';
 
-type SubmitStatus = 'idle' | 'loading' | 'error' | 'success';
+type SubmitStatus = 'idle' | 'loading' | 'error';
 
 /**
  * Modal « Connexion installateur » — overlay SSO conforme à la maquette.
@@ -16,12 +17,24 @@ type SubmitStatus = 'idle' | 'loading' | 'error' | 'success';
 export function InstallerLoginModal() {
   const isOpen = useAuthModalStore((state) => state.isOpen);
   const close = useAuthModalStore((state) => state.close);
+  const setUser = useSessionStore((state) => state.setUser);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<SubmitStatus>('idle');
   const [error, setError] = useState<string | null>(null);
-  const [session, setSession] = useState<InstallerSession | null>(null);
+
+  // Connexion réussie : on enregistre l'utilisateur (store + localStorage),
+  // on réinitialise le formulaire et on ferme le modal. Le SiteHeader bascule
+  // alors automatiquement sur l'affichage « connecté ».
+  const handleSuccess = (response: LoginResponse) => {
+    setUser(toAuthUser(response));
+    setStatus('idle');
+    setError(null);
+    setEmail('');
+    setPassword('');
+    close();
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -38,11 +51,10 @@ export function InstallerLoginModal() {
     const bffOrigin = new URL(googleLoginUrl()).origin;
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== bffOrigin) return;
-      const data = event.data as { type?: string; ok?: boolean; session?: InstallerSession; error?: string };
+      const data = event.data as { type?: string; ok?: boolean; session?: LoginResponse; error?: string };
       if (data?.type !== 'solarcell-sso') return;
       if (data.ok && data.session) {
-        setSession(data.session);
-        setStatus('success');
+        handleSuccess(data.session);
       } else {
         setStatus('error');
         setError(`Connexion Google impossible. ${data.error ?? ''}`.trim());
@@ -50,6 +62,7 @@ export function InstallerLoginModal() {
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -66,8 +79,7 @@ export function InstallerLoginModal() {
     setError(null);
     try {
       const result = await loginWithEmail({ email, password });
-      setSession(result);
-      setStatus('success');
+      handleSuccess(result);
     } catch {
       setStatus('error');
       setError('Connexion impossible. Vérifiez vos identifiants ou réessayez plus tard.');
@@ -114,31 +126,22 @@ export function InstallerLoginModal() {
             Accédez à votre espace formation, onboarding et synchronisation Odoo.
           </p>
 
-          {status === 'success' && session ? (
-            <div className="mt-5 rounded-[14px] border border-[#BFE6CB] bg-[#F1FBF4] p-4 text-[14px] text-[#1E6B39]">
-              <p className="font-bold">Connecté ✓</p>
-              <p className="mt-1 text-[13px] text-[#3C7A52]">
-                Dossier #{session.applicationId} · contact #{session.partnerId} · identité #{session.identityId}
-              </p>
-            </div>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={startGoogleLogin}
-                className="mt-5 flex h-[50px] w-full items-center justify-center gap-3 rounded-[12px] border border-[#E2E6E9] bg-white text-[15px] font-bold text-[#1A2B33] transition hover:bg-[#F7F9FA]"
-              >
-                <GoogleGlyph className="h-5 w-5" />
-                Continuer avec Google ID
-              </button>
+          <button
+            type="button"
+            onClick={startGoogleLogin}
+            className="mt-5 flex h-[50px] w-full items-center justify-center gap-3 rounded-[12px] border border-[#E2E6E9] bg-white text-[15px] font-bold text-[#1A2B33] transition hover:bg-[#F7F9FA]"
+          >
+            <GoogleGlyph className="h-5 w-5" />
+            Continuer avec Google ID
+          </button>
 
-              <div className="my-4 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-[#9AA7AD]">
-                <span className="h-px flex-1 bg-[#E6EAEC]" />
-                ou
-                <span className="h-px flex-1 bg-[#E6EAEC]" />
-              </div>
+          <div className="my-4 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-[#9AA7AD]">
+            <span className="h-px flex-1 bg-[#E6EAEC]" />
+            ou
+            <span className="h-px flex-1 bg-[#E6EAEC]" />
+          </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="installer-email" className="block text-[13px] font-bold text-[#2A3940]">
                     Email
@@ -186,14 +189,12 @@ export function InstallerLoginModal() {
                 </Button>
               </form>
 
-              <button
-                type="button"
-                className="mt-4 block w-full text-center text-[14px] font-bold text-[#16323D] transition hover:underline"
-              >
-                Connexion directe Odoo
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            className="mt-4 block w-full text-center text-[14px] font-bold text-[#16323D] transition hover:underline"
+          >
+            Connexion directe Odoo
+          </button>
 
           <p className="mt-5 text-center text-[12px] leading-[1.5] text-[#9AA7AD]">
             Les identifiants sont transmis au BFF sécurisé. La clé interne Odoo ne doit jamais être exposée côté navigateur.

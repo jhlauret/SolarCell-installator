@@ -1,4 +1,4 @@
-import type { MouseEvent } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../ui/BrandLogo';
 import { Button } from '../ui/Button';
@@ -6,6 +6,17 @@ import { Icon } from '../ui/Icon';
 import { useLandingNavigation } from '../../hooks/useLandingNavigation';
 import { useLandingStore } from '../../store/useLandingStore';
 import { useAuthModalStore } from '../../features/auth/store/useAuthModalStore';
+import { useSessionStore } from '../../features/auth/store/useSessionStore';
+import { logout } from '../../features/auth/api/authApi';
+import type { AuthUser } from '../../features/auth/types';
+
+/** Deux premières initiales (nom sinon email) pour l'avatar de repli. */
+function initialsOf(user: AuthUser): string {
+  const source = (user.name ?? user.email ?? '?').trim();
+  const parts = source.split(/[\s@.]+/).filter(Boolean);
+  const letters = parts.length >= 2 ? parts[0][0] + parts[1][0] : source.slice(0, 2);
+  return letters.toUpperCase();
+}
 
 /**
  * Unified site chrome shared by the marketing landing page, the training
@@ -18,8 +29,21 @@ export function SiteHeader() {
   const { items, setActiveSection } = useLandingNavigation();
   const language = useLandingStore((state) => state.language);
   const openLoginModal = useAuthModalStore((state) => state.open);
+  const user = useSessionStore((state) => state.user);
+  const clearSession = useSessionStore((state) => state.clear);
+  const [loggingOut, setLoggingOut] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      clearSession();
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <header className="relative z-30 mx-auto flex h-[99px] w-full max-w-[1415px] items-center justify-between px-4 pt-[2px] sm:px-6 lg:px-0">
@@ -58,19 +82,49 @@ export function SiteHeader() {
           {language}
           <Icon name="chevron" className="h-[15px] w-[15px]" strokeWidth={2.7} />
         </button>
-        <Button
-          variant="outline"
-          className="hidden h-[44px] w-[139px] rounded-[7px] px-0 text-[14px] sm:inline-flex"
-          onClick={openLoginModal}
-        >
-          Se connecter
-        </Button>
-        <Button
-          className="h-[44px] w-[132px] rounded-[7px] px-0 text-[14px]"
-          onClick={() => navigate('/onboarding/personal')}
-        >
-          S’inscrire
-        </Button>
+        {user ? (
+          <div className="flex items-center gap-3">
+            {user.picture ? (
+              <img
+                src={user.picture}
+                alt=""
+                referrerPolicy="no-referrer"
+                className="h-9 w-9 rounded-full object-cover ring-1 ring-[#E2E6E9]"
+              />
+            ) : (
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#E8F6EC] text-[13px] font-bold text-[#1E8E4C]">
+                {initialsOf(user)}
+              </span>
+            )}
+            <span className="hidden max-w-[150px] truncate text-[14px] font-semibold text-[#10262D] sm:block">
+              {user.name ?? user.email}
+            </span>
+            <Button
+              variant="outline"
+              className="h-[44px] rounded-[7px] px-4 text-[14px] disabled:opacity-70"
+              onClick={handleLogout}
+              disabled={loggingOut}
+            >
+              {loggingOut ? 'Déconnexion…' : 'Déconnecter'}
+            </Button>
+          </div>
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              className="hidden h-[44px] w-[139px] rounded-[7px] px-0 text-[14px] sm:inline-flex"
+              onClick={openLoginModal}
+            >
+              Se connecter
+            </Button>
+            <Button
+              className="h-[44px] w-[132px] rounded-[7px] px-0 text-[14px]"
+              onClick={() => navigate('/onboarding/personal')}
+            >
+              S’inscrire
+            </Button>
+          </>
+        )}
       </div>
     </header>
   );

@@ -12,6 +12,7 @@ export type FirebaseRestUser = {
   localId: string;
   email: string;
   displayName?: string;
+  profilePicture?: string;
   registered?: boolean;
 };
 
