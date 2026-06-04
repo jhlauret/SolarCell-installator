@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { Icon } from '../ui/Icon';
 import { useLandingNavigation } from '../../hooks/useLandingNavigation';
 import { useLandingStore } from '../../store/useLandingStore';
+import { useAuthModalStore } from '../../features/auth/store/useAuthModalStore';
 
 /**
  * Unified site chrome shared by the marketing landing page, the training
@@ -16,6 +17,7 @@ import { useLandingStore } from '../../store/useLandingStore';
 export function SiteHeader() {
   const { items, setActiveSection } = useLandingNavigation();
   const language = useLandingStore((state) => state.language);
+  const openLoginModal = useAuthModalStore((state) => state.open);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -56,7 +58,11 @@ export function SiteHeader() {
           {language}
           <Icon name="chevron" className="h-[15px] w-[15px]" strokeWidth={2.7} />
         </button>
-        <Button variant="outline" className="hidden h-[44px] w-[139px] rounded-[7px] px-0 text-[14px] sm:inline-flex">
+        <Button
+          variant="outline"
+          className="hidden h-[44px] w-[139px] rounded-[7px] px-0 text-[14px] sm:inline-flex"
+          onClick={openLoginModal}
+        >
           Se connecter
         </Button>
         <Button
