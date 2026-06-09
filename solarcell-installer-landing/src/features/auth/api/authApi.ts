@@ -22,6 +22,20 @@ export async function logout(): Promise<void> {
   }
 }
 
+export async function registerWithEmail(payload: InstallerLoginRequest): Promise<LoginResponse> {
+  const { data } = await httpClient.post<LoginResponse>('/auth/register', payload);
+  return data;
+}
+
+export async function forgotPassword(email: string): Promise<void> {
+  await httpClient.post('/auth/forgot-password', { email });
+}
+
+export async function checkProvider(email: string): Promise<string[]> {
+  const { data } = await httpClient.post<{ signinMethods: string[] }>('/auth/check-provider', { email });
+  return data.signinMethods ?? [];
+}
+
 /** URL de redirection vers l'OAuth Google côté BFF (bouton « Continuer avec Google ID »). */
 export function googleLoginUrl(): string {
   const base = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
