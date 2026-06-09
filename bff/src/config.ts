@@ -19,6 +19,8 @@ export const config = {
     url: process.env.ODOO_URL ?? '',
     db: process.env.ODOO_DB ?? '',
     apiKey: process.env.ODOO_API_KEY ?? '',
+    adminUser: process.env.ODOO_ADMIN_USER ?? 'gpttrace@gmail.com',
+    adminPassword: process.env.ODOO_ADMIN_PASSWORD ?? '',
   },
   google: {
     clientId: process.env.GOOGLE_OAUTH_CLIENT_ID ?? '',
