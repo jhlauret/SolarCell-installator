@@ -27,8 +27,9 @@ export function useOnboardingNavigation() {
     if (nextStep) {
       navigate(`/onboarding/${nextStep.id}`);
     } else {
-      // Last step completed: return to the landing page.
-      navigate('/');
+      // Dernière étape complétée : on dirige vers l'écran de confirmation,
+      // qui finalise le dossier (statut Odoo « submitted ») et propose la suite.
+      navigate('/onboarding/termine');
     }
   }
 

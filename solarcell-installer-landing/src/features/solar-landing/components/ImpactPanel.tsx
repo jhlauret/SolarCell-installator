@@ -2,9 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { metrics } from '../../../data/landingContent';
 import { Button } from '../../../shared/ui/Button';
 import { Icon } from '../../../shared/ui/Icon';
+import { useSessionStore } from '../../auth/store/useSessionStore';
 
 export function ImpactPanel() {
   const navigate = useNavigate();
+  const user = useSessionStore((s) => s.user);
   return (
     <section
       id="program"
@@ -49,7 +51,7 @@ export function ImpactPanel() {
           className="mt-[23px] h-[54px] w-[223px] rounded-[7px] text-[15px]"
           onClick={() => navigate('/onboarding/personal')}
         >
-          Créer mon compte
+          {user ? 'Modifier mes informations' : 'Créer mon compte'}
         </Button>
       </aside>
     </section>
