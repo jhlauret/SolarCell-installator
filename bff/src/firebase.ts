@@ -1,4 +1,5 @@
-import * as admin from 'firebase-admin';
+import { initializeApp, applicationDefault, type App } from 'firebase-admin/app';
+import { getAuth, type DecodedIdToken } from 'firebase-admin/auth';
 import { config } from './config';
 
 /**
@@ -7,21 +8,21 @@ import { config } from './config';
  * service (GOOGLE_APPLICATION_CREDENTIALS). Le login email/mot de passe via
  * l'API REST n'en a pas besoin.
  */
-let app: admin.app.App | null = null;
+let app: App | null = null;
 
 export function firebaseAdminAvailable(): boolean {
   return Boolean(config.firebase.serviceAccountPath);
 }
 
-function getApp(): admin.app.App {
+function getApp(): App {
   if (app) return app;
-  app = admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+  app = initializeApp({
+    credential: applicationDefault(),
     projectId: config.firebase.projectId || undefined,
   });
   return app;
 }
 
-export async function verifyIdToken(idToken: string): Promise<admin.auth.DecodedIdToken> {
-  return getApp().auth().verifyIdToken(idToken);
+export async function verifyIdToken(idToken: string): Promise<DecodedIdToken> {
+  return getAuth(getApp()).verifyIdToken(idToken);
 }
