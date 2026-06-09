@@ -1,46 +1,62 @@
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarDays, Flag, ShieldCheck } from 'lucide-react';
 import { FieldShell, SelectField, TextField } from '../../ui/FormControls';
 import { useStepSubmit } from '../../hooks/useStepSubmit';
 import { savePersonalStep } from '../../api/onboardingApi';
+import type { OnboardingPrefillData } from '../../api/onboardingApi';
 import { Button } from '../../../../shared/ui/Button';
 import { useSessionStore } from '../../../auth/store/useSessionStore';
 
-export function PersonalStep({ goNext }: { goNext: () => void }) {
+type Props = {
+  goNext: () => void;
+  initialData?: OnboardingPrefillData['personal'];
+};
+
+export function PersonalStep({ goNext, initialData }: Props) {
   const user = useSessionStore((s) => s.user);
   const { submit, loading, error, saved } = useStepSubmit('personal', savePersonalStep);
 
   const [defaultFirst, defaultLast] = splitName(user?.name);
 
-  const firstNameRef = useRef<HTMLInputElement>(null);
-  const lastNameRef  = useRef<HTMLInputElement>(null);
-  const birthDateRef = useRef<HTMLInputElement>(null);
-  const birthCountryRef = useRef<HTMLSelectElement>(null);
-  const nationalityRef  = useRef<HTMLSelectElement>(null);
-  const emailRef   = useRef<HTMLInputElement>(null);
-  const phoneRef   = useRef<HTMLInputElement>(null);
-  const addressRef = useRef<HTMLInputElement>(null);
-  const zipRef     = useRef<HTMLInputElement>(null);
-  const cityRef    = useRef<HTMLInputElement>(null);
-  const countryRef = useRef<HTMLSelectElement>(null);
-  const langRef    = useRef<HTMLSelectElement>(null);
-  const tzRef      = useRef<HTMLSelectElement>(null);
+  const [firstName, setFirstName]       = useState(initialData?.firstName ?? defaultFirst);
+  const [lastName, setLastName]         = useState(initialData?.lastName ?? defaultLast);
+  const [birthDate, setBirthDate]       = useState(initialData?.birthDate ?? '');
+  const [birthCountry, setBirthCountry] = useState(initialData?.birthCountry ?? '');
+  const [nationality, setNationality]   = useState(initialData?.nationality ?? '');
+  const [email, setEmail]               = useState(initialData?.email ?? user?.email ?? '');
+  const [phone, setPhone]               = useState(initialData?.phone ?? '');
+  const [address, setAddress]           = useState(initialData?.address ?? '');
+  const [zip, setZip]                   = useState(initialData?.zip ?? '');
+  const [city, setCity]                 = useState(initialData?.city ?? '');
+  const [country, setCountry]           = useState(initialData?.country ?? '');
+  const [preferredLang, setPreferredLang] = useState(initialData?.preferredLang ?? 'fr');
+  const [timezone, setTimezone]         = useState(initialData?.timezone ?? 'paris');
+
+  // Quand les données Odoo arrivent après le premier rendu, on les applique
+  useEffect(() => {
+    if (!initialData) return;
+    if (initialData.firstName)    setFirstName(initialData.firstName);
+    if (initialData.lastName)     setLastName(initialData.lastName);
+    if (initialData.birthDate)    setBirthDate(initialData.birthDate);
+    if (initialData.birthCountry) setBirthCountry(initialData.birthCountry);
+    if (initialData.nationality)  setNationality(initialData.nationality);
+    if (initialData.email)        setEmail(initialData.email);
+    if (initialData.phone)        setPhone(initialData.phone);
+    if (initialData.address)      setAddress(initialData.address);
+    if (initialData.zip)          setZip(initialData.zip);
+    if (initialData.city)         setCity(initialData.city);
+    if (initialData.country)      setCountry(initialData.country);
+    if (initialData.preferredLang) setPreferredLang(initialData.preferredLang);
+    if (initialData.timezone)     setTimezone(initialData.timezone);
+  }, [initialData]);
 
   async function handleSave() {
     const ok = await submit({
-      firstName:    firstNameRef.current?.value ?? '',
-      lastName:     lastNameRef.current?.value ?? '',
-      birthDate:    birthDateRef.current?.value || undefined,
-      birthCountry: birthCountryRef.current?.value || undefined,
-      nationality:  nationalityRef.current?.value || undefined,
-      email:        emailRef.current?.value ?? '',
-      phone:        phoneRef.current?.value || undefined,
-      address:      addressRef.current?.value || undefined,
-      zip:          zipRef.current?.value || undefined,
-      city:         cityRef.current?.value || undefined,
-      country:      countryRef.current?.value || undefined,
-      preferredLang: langRef.current?.value || 'fr',
-      timezone:     tzRef.current?.value || undefined,
+      firstName, lastName, birthDate: birthDate || undefined,
+      birthCountry: birthCountry || undefined, nationality: nationality || undefined,
+      email, phone: phone || undefined, address: address || undefined,
+      zip: zip || undefined, city: city || undefined, country: country || undefined,
+      preferredLang, timezone: timezone || undefined,
     });
     if (ok) goNext();
   }
@@ -51,19 +67,19 @@ export function PersonalStep({ goNext }: { goNext: () => void }) {
         <h2 className="section-title">Identité</h2>
         <div className="mt-[22px] grid grid-cols-6 gap-x-[20px] gap-y-[20px]">
           <FieldShell label="Prénom" className="col-span-2">
-            <TextField ref={firstNameRef} placeholder="Votre prénom" defaultValue={defaultFirst} />
+            <TextField value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Votre prénom" />
           </FieldShell>
           <FieldShell label="Nom" className="col-span-2">
-            <TextField ref={lastNameRef} placeholder="Votre nom" defaultValue={defaultLast} />
+            <TextField value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Votre nom" />
           </FieldShell>
           <FieldShell label="Date de naissance" className="col-span-2">
             <div className="relative">
-              <TextField ref={birthDateRef} placeholder="JJ / MM / AAAA" className="pr-10" />
+              <TextField value={birthDate} onChange={e => setBirthDate(e.target.value)} placeholder="JJ / MM / AAAA" className="pr-10" />
               <CalendarDays className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-500" size={17} />
             </div>
           </FieldShell>
           <FieldShell label="Pays de naissance" className="col-span-3">
-            <SelectField ref={birthCountryRef} defaultValue="">
+            <SelectField value={birthCountry} onChange={e => setBirthCountry(e.target.value)}>
               <option value="" disabled>Sélectionnez votre pays</option>
               <option>France</option>
               <option>Belgique</option>
@@ -71,7 +87,7 @@ export function PersonalStep({ goNext }: { goNext: () => void }) {
             </SelectField>
           </FieldShell>
           <FieldShell label="Nationalité" className="col-span-3">
-            <SelectField ref={nationalityRef} defaultValue="">
+            <SelectField value={nationality} onChange={e => setNationality(e.target.value)}>
               <option value="" disabled>Sélectionnez votre nationalité</option>
               <option>Française</option>
               <option>Belge</option>
@@ -85,22 +101,22 @@ export function PersonalStep({ goNext }: { goNext: () => void }) {
         <h2 className="section-title">Coordonnées</h2>
         <div className="mt-[18px] grid grid-cols-6 gap-x-[20px] gap-y-[18px]">
           <FieldShell label="Adresse e-mail" className="col-span-3">
-            <TextField ref={emailRef} type="email" placeholder="exemple@email.com" defaultValue={user?.email ?? ''} />
+            <TextField value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="exemple@email.com" />
           </FieldShell>
           <FieldShell label="Numéro de téléphone" className="col-span-3">
-            <TextField ref={phoneRef} placeholder="🇫🇷   +33 6 12 34 56 78" />
+            <TextField value={phone} onChange={e => setPhone(e.target.value)} placeholder="🇫🇷   +33 6 12 34 56 78" />
           </FieldShell>
           <FieldShell label="Adresse" className="col-span-6">
-            <TextField ref={addressRef} placeholder="Numéro et nom de rue" />
+            <TextField value={address} onChange={e => setAddress(e.target.value)} placeholder="Numéro et nom de rue" />
           </FieldShell>
           <FieldShell label="Code postal" className="col-span-2">
-            <TextField ref={zipRef} placeholder="Code postal" />
+            <TextField value={zip} onChange={e => setZip(e.target.value)} placeholder="Code postal" />
           </FieldShell>
           <FieldShell label="Ville" className="col-span-2">
-            <TextField ref={cityRef} placeholder="Votre ville" />
+            <TextField value={city} onChange={e => setCity(e.target.value)} placeholder="Votre ville" />
           </FieldShell>
           <FieldShell label="Pays" className="col-span-2">
-            <SelectField ref={countryRef} defaultValue="">
+            <SelectField value={country} onChange={e => setCountry(e.target.value)}>
               <option value="" disabled>Sélectionnez votre pays</option>
               <option>France</option>
               <option>Belgique</option>
@@ -115,7 +131,7 @@ export function PersonalStep({ goNext }: { goNext: () => void }) {
         <div className="mt-[18px] grid grid-cols-2 gap-x-[20px]">
           <FieldShell label="Langue préférée">
             <div className="relative">
-              <SelectField ref={langRef} defaultValue="fr" className="pl-12">
+              <SelectField value={preferredLang} onChange={e => setPreferredLang(e.target.value)} className="pl-12">
                 <option value="fr">Français</option>
                 <option value="en">English</option>
               </SelectField>
@@ -123,7 +139,7 @@ export function PersonalStep({ goNext }: { goNext: () => void }) {
             </div>
           </FieldShell>
           <FieldShell label="Fuseau horaire">
-            <SelectField ref={tzRef} defaultValue="paris">
+            <SelectField value={timezone} onChange={e => setTimezone(e.target.value)}>
               <option value="paris">(UTC+01:00) Paris, Bruxelles</option>
             </SelectField>
           </FieldShell>

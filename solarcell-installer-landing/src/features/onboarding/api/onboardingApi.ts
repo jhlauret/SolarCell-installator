@@ -1,6 +1,32 @@
 import { httpClient } from '../../../shared/api/httpClient';
 import type { OnboardingStepId } from '../types';
 
+export type OnboardingPrefillData = {
+  personal?: {
+    firstName?: string; lastName?: string; birthDate?: string;
+    birthCountry?: string; nationality?: string; email?: string;
+    phone?: string; address?: string; zip?: string; city?: string;
+    country?: string; preferredLang?: string; timezone?: string;
+  };
+  professional?: {
+    companyType?: string; companyName?: string; siret?: string;
+    vatNumber?: string; apeCode?: string; proAddress?: string;
+    proZip?: string; proCity?: string; proCountry?: string;
+    proPhone?: string; proEmail?: string; creationYear?: string;
+    employeeRange?: string; mainActivity?: string;
+  };
+  skills?: {
+    selected: string[];
+    levels: Record<string, string>;
+    yearsExperience?: string;
+    installations?: string;
+  };
+  wallet?: {
+    walletType: 'integrated' | 'external';
+    recoveryConfirmed: boolean;
+  };
+};
+
 export type OnboardingStatus = {
   exists: boolean;
   installerId?: number;
@@ -91,5 +117,12 @@ export async function saveTrainingProgress(applicationId: number, payload: {
   progresses: Array<{ courseKey: string; progress: number; status: string }>;
 }): Promise<{ ok: boolean; installerId: number }> {
   const { data } = await httpClient.post('/onboarding/training', { applicationId, ...payload });
+  return data;
+}
+
+export async function getOnboardingData(applicationId: number): Promise<OnboardingPrefillData> {
+  const { data } = await httpClient.get<OnboardingPrefillData>('/onboarding/data', {
+    params: { applicationId },
+  });
   return data;
 }
