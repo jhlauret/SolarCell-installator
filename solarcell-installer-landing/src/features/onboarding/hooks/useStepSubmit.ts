@@ -26,7 +26,8 @@ export function useStepSubmit<T>(stepId: OnboardingStepId, saveFn: SubmitFn<T>) 
       setSaved(true);
       return true;
     } catch (err: unknown) {
-      setError((err as Error).message ?? 'Erreur lors de la sauvegarde.');
+      const serverMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(serverMsg ?? (err as Error).message ?? 'Erreur lors de la sauvegarde.');
       return false;
     } finally {
       setLoading(false);
