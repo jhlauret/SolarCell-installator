@@ -120,6 +120,11 @@ export async function saveTrainingProgress(applicationId: number, payload: {
   return data;
 }
 
+export async function finalizeOnboarding(applicationId: number): Promise<{ ok: boolean; status: string }> {
+  const { data } = await httpClient.post('/onboarding/finalize', { applicationId });
+  return data;
+}
+
 export async function getOnboardingData(applicationId: number): Promise<OnboardingPrefillData> {
   const { data } = await httpClient.get<OnboardingPrefillData>('/onboarding/data', {
     params: { applicationId },
