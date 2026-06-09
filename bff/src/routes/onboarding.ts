@@ -118,6 +118,13 @@ function str(val: unknown): string {
   return String(val);
 }
 
+function toISODate(raw: string | undefined): string | false {
+  if (!raw) return false;
+  const m = raw.match(/^(\d{2})[/\-](\d{2})[/\-](\d{4})$/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  return raw;
+}
+
 // ── GET /api/onboarding/status ────────────────────────────────────────────────
 onboardingRouter.get('/status', async (req, res) => {
   const applicationId = Number(req.query.applicationId);
@@ -169,7 +176,7 @@ onboardingRouter.post('/personal', requireAppId, async (req, res) => {
         // Données personnelles stockées directement sur le dossier
         x_first_name:    firstName ?? false,
         x_last_name:     lastName ?? false,
-        x_birth_date:    birthDate ?? false,
+        x_birth_date:    toISODate(birthDate),
         x_birth_country: birthCountry ?? false,
         x_nationality:   nationality ?? false,
         x_phone:         phone ?? false,

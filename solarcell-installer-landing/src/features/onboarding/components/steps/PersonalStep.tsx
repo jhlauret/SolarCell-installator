@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CalendarDays, Flag, ShieldCheck } from 'lucide-react';
+import { Flag, ShieldCheck } from 'lucide-react';
 import { FieldShell, SelectField, TextField } from '../../ui/FormControls';
 import { useStepSubmit } from '../../hooks/useStepSubmit';
 import { savePersonalStep } from '../../api/onboardingApi';
@@ -73,10 +73,12 @@ export function PersonalStep({ goNext, initialData }: Props) {
             <TextField value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Votre nom" />
           </FieldShell>
           <FieldShell label="Date de naissance" className="col-span-2">
-            <div className="relative">
-              <TextField value={birthDate} onChange={e => setBirthDate(e.target.value)} placeholder="JJ / MM / AAAA" className="pr-10" />
-              <CalendarDays className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-500" size={17} />
-            </div>
+            <input
+              type="date"
+              value={birthDate}
+              onChange={e => setBirthDate(e.target.value)}
+              className="input-base w-full"
+            />
           </FieldShell>
           <FieldShell label="Pays de naissance" className="col-span-3">
             <SelectField value={birthCountry} onChange={e => setBirthCountry(e.target.value)}>
