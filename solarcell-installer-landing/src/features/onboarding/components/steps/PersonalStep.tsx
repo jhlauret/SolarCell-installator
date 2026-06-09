@@ -1,26 +1,69 @@
+import { useRef } from 'react';
 import { CalendarDays, Flag, ShieldCheck } from 'lucide-react';
 import { FieldShell, SelectField, TextField } from '../../ui/FormControls';
+import { useStepSubmit } from '../../hooks/useStepSubmit';
+import { savePersonalStep } from '../../api/onboardingApi';
+import { Button } from '../../../../shared/ui/Button';
+import { useSessionStore } from '../../../auth/store/useSessionStore';
 
-export function PersonalStep() {
+export function PersonalStep({ goNext }: { goNext: () => void }) {
+  const user = useSessionStore((s) => s.user);
+  const { submit, loading, error, saved } = useStepSubmit('personal', savePersonalStep);
+
+  const [defaultFirst, defaultLast] = splitName(user?.name);
+
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const lastNameRef  = useRef<HTMLInputElement>(null);
+  const birthDateRef = useRef<HTMLInputElement>(null);
+  const birthCountryRef = useRef<HTMLSelectElement>(null);
+  const nationalityRef  = useRef<HTMLSelectElement>(null);
+  const emailRef   = useRef<HTMLInputElement>(null);
+  const phoneRef   = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLInputElement>(null);
+  const zipRef     = useRef<HTMLInputElement>(null);
+  const cityRef    = useRef<HTMLInputElement>(null);
+  const countryRef = useRef<HTMLSelectElement>(null);
+  const langRef    = useRef<HTMLSelectElement>(null);
+  const tzRef      = useRef<HTMLSelectElement>(null);
+
+  async function handleSave() {
+    const ok = await submit({
+      firstName:    firstNameRef.current?.value ?? '',
+      lastName:     lastNameRef.current?.value ?? '',
+      birthDate:    birthDateRef.current?.value || undefined,
+      birthCountry: birthCountryRef.current?.value || undefined,
+      nationality:  nationalityRef.current?.value || undefined,
+      email:        emailRef.current?.value ?? '',
+      phone:        phoneRef.current?.value || undefined,
+      address:      addressRef.current?.value || undefined,
+      zip:          zipRef.current?.value || undefined,
+      city:         cityRef.current?.value || undefined,
+      country:      countryRef.current?.value || undefined,
+      preferredLang: langRef.current?.value || 'fr',
+      timezone:     tzRef.current?.value || undefined,
+    });
+    if (ok) goNext();
+  }
+
   return (
     <div className="space-y-[28px]">
       <section>
         <h2 className="section-title">Identité</h2>
         <div className="mt-[22px] grid grid-cols-6 gap-x-[20px] gap-y-[20px]">
           <FieldShell label="Prénom" className="col-span-2">
-            <TextField placeholder="Votre prénom" />
+            <TextField ref={firstNameRef} placeholder="Votre prénom" defaultValue={defaultFirst} />
           </FieldShell>
           <FieldShell label="Nom" className="col-span-2">
-            <TextField placeholder="Votre nom" />
+            <TextField ref={lastNameRef} placeholder="Votre nom" defaultValue={defaultLast} />
           </FieldShell>
           <FieldShell label="Date de naissance" className="col-span-2">
             <div className="relative">
-              <TextField placeholder="JJ / MM / AAAA" className="pr-10" />
+              <TextField ref={birthDateRef} placeholder="JJ / MM / AAAA" className="pr-10" />
               <CalendarDays className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-500" size={17} />
             </div>
           </FieldShell>
           <FieldShell label="Pays de naissance" className="col-span-3">
-            <SelectField defaultValue="">
+            <SelectField ref={birthCountryRef} defaultValue="">
               <option value="" disabled>Sélectionnez votre pays</option>
               <option>France</option>
               <option>Belgique</option>
@@ -28,7 +71,7 @@ export function PersonalStep() {
             </SelectField>
           </FieldShell>
           <FieldShell label="Nationalité" className="col-span-3">
-            <SelectField defaultValue="">
+            <SelectField ref={nationalityRef} defaultValue="">
               <option value="" disabled>Sélectionnez votre nationalité</option>
               <option>Française</option>
               <option>Belge</option>
@@ -42,22 +85,22 @@ export function PersonalStep() {
         <h2 className="section-title">Coordonnées</h2>
         <div className="mt-[18px] grid grid-cols-6 gap-x-[20px] gap-y-[18px]">
           <FieldShell label="Adresse e-mail" className="col-span-3">
-            <TextField type="email" placeholder="exemple@email.com" />
+            <TextField ref={emailRef} type="email" placeholder="exemple@email.com" defaultValue={user?.email ?? ''} />
           </FieldShell>
           <FieldShell label="Numéro de téléphone" className="col-span-3">
-            <TextField placeholder="🇫🇷   +33 6 12 34 56 78" />
+            <TextField ref={phoneRef} placeholder="🇫🇷   +33 6 12 34 56 78" />
           </FieldShell>
           <FieldShell label="Adresse" className="col-span-6">
-            <TextField placeholder="Numéro et nom de rue" />
+            <TextField ref={addressRef} placeholder="Numéro et nom de rue" />
           </FieldShell>
           <FieldShell label="Code postal" className="col-span-2">
-            <TextField placeholder="Code postal" />
+            <TextField ref={zipRef} placeholder="Code postal" />
           </FieldShell>
           <FieldShell label="Ville" className="col-span-2">
-            <TextField placeholder="Votre ville" />
+            <TextField ref={cityRef} placeholder="Votre ville" />
           </FieldShell>
           <FieldShell label="Pays" className="col-span-2">
-            <SelectField defaultValue="">
+            <SelectField ref={countryRef} defaultValue="">
               <option value="" disabled>Sélectionnez votre pays</option>
               <option>France</option>
               <option>Belgique</option>
@@ -72,7 +115,7 @@ export function PersonalStep() {
         <div className="mt-[18px] grid grid-cols-2 gap-x-[20px]">
           <FieldShell label="Langue préférée">
             <div className="relative">
-              <SelectField defaultValue="fr" className="pl-12">
+              <SelectField ref={langRef} defaultValue="fr" className="pl-12">
                 <option value="fr">Français</option>
                 <option value="en">English</option>
               </SelectField>
@@ -80,7 +123,7 @@ export function PersonalStep() {
             </div>
           </FieldShell>
           <FieldShell label="Fuseau horaire">
-            <SelectField defaultValue="paris">
+            <SelectField ref={tzRef} defaultValue="paris">
               <option value="paris">(UTC+01:00) Paris, Bruxelles</option>
             </SelectField>
           </FieldShell>
@@ -94,6 +137,23 @@ export function PersonalStep() {
           <p className="mt-1 text-[13px] text-ink-700">Vos informations personnelles sont sécurisées et ne seront jamais partagées.</p>
         </div>
       </div>
+
+      {error && <p className="text-[13px] text-red-600">{error}</p>}
+      {saved && <p className="text-[13px] text-solar-700 font-black">✓ Informations sauvegardées</p>}
+
+      <div className="flex justify-end">
+        <Button onClick={handleSave} disabled={loading} size="md">
+          {loading ? 'Sauvegarde…' : 'Sauvegarder et continuer'}
+        </Button>
+      </div>
     </div>
   );
+}
+
+function splitName(fullName?: string): [string, string] {
+  if (!fullName) return ['', ''];
+  const parts = fullName.trim().split(' ');
+  const first = parts[0] ?? '';
+  const last = parts.slice(1).join(' ');
+  return [first, last];
 }
