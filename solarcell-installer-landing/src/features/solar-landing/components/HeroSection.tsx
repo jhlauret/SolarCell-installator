@@ -4,9 +4,11 @@ import heroImage from '../../../assets/solar-installer-hero.png';
 import { heroCopy } from '../../../data/landingContent';
 import { Button } from '../../../shared/ui/Button';
 import { Icon } from '../../../shared/ui/Icon';
+import { useSessionStore } from '../../auth/store/useSessionStore';
 
 export function HeroSection({ children }: PropsWithChildren) {
   const navigate = useNavigate();
+  const user = useSessionStore((s) => s.user);
   return (
     <section className="relative min-h-[611px] overflow-hidden lg:min-h-[612px]">
       <img
@@ -33,7 +35,7 @@ export function HeroSection({ children }: PropsWithChildren) {
 
           <div className="mt-[34px] flex flex-wrap gap-[25px]">
             <Button className="w-[232px]" onClick={() => navigate('/onboarding/personal')}>
-              Rejoindre le programme
+              {user ? 'Modifier mes informations' : 'Rejoindre le programme'}
             </Button>
             <Button variant="secondary" className="w-[178px] gap-[10px]">
               <Icon name="play" className="h-[21px] w-[21px] text-[#0B8A3A]" strokeWidth={2.3} />

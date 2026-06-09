@@ -3,22 +3,31 @@ import type { ComponentType } from 'react';
 import type { LucideProps } from 'lucide-react';
 import { IconBadge } from '../../ui/IconBadge';
 import { clsx } from '../../../../shared/ui/clsx';
+import { Button } from '../../../../shared/ui/Button';
+import { useOnboardingStore } from '../../store/onboardingStore';
 
 const courses: Array<{ title: string; desc: string; icon: ComponentType<LucideProps>; progress: number; done?: boolean }> = [
-  { title: 'Sécurité sur les chantiers photovoltaïques', desc: 'Règles de sécurité essentielles pour travailler sur les installations solaires en toute sécurité.', icon: ShieldCheck, progress: 100, done: true },
-  { title: 'Installation de panneaux solaires', desc: 'Bonnes pratiques d’installation, fixation, raccordement et tests des panneaux photovoltaïques.', icon: SunMedium, progress: 100, done: true },
-  { title: 'Installation et configuration des onduleurs', desc: 'Apprenez à installer, configurer et maintenir les onduleurs solaires en toute sécurité.', icon: SquareCheckBig, progress: 25 },
-  { title: 'Systèmes de batteries solaires', desc: 'Installation, raccordement et maintenance des systèmes de stockage d’énergie (batteries).', icon: BatteryCharging, progress: 0 },
-  { title: 'Câblage et protections électriques', desc: 'Câblage DC/AC, protections, mise à la terre et conformité aux normes électriques.', icon: PlayCircle, progress: 0 }
+  { title: "Sécurité sur les chantiers photovoltaïques", desc: "Règles de sécurité essentielles pour travailler sur les installations solaires en toute sécurité.", icon: ShieldCheck, progress: 100, done: true },
+  { title: "Installation de panneaux solaires", desc: "Bonnes pratiques d'installation, fixation, raccordement et tests des panneaux photovoltaïques.", icon: SunMedium, progress: 100, done: true },
+  { title: "Installation et configuration des onduleurs", desc: "Apprenez à installer, configurer et maintenir les onduleurs solaires en toute sécurité.", icon: SquareCheckBig, progress: 25 },
+  { title: "Systèmes de batteries solaires", desc: "Installation, raccordement et maintenance des systèmes de stockage d'énergie (batteries).", icon: BatteryCharging, progress: 0 },
+  { title: "Câblage et protections électriques", desc: "Câblage DC/AC, protections, mise à la terre et conformité aux normes électriques.", icon: PlayCircle, progress: 0 },
 ];
 
 const resources = [
-  { title: 'Guide d’installation', subtitle: 'PDF · 2.4 Mo', icon: FileText },
-  { title: 'Normes et conformité', subtitle: 'PDF · 1.8 Mo', icon: ShieldCheck },
-  { title: 'Vidéos tutoriels', subtitle: '5 vidéos', icon: Video }
+  { title: "Guide d'installation", subtitle: "PDF · 2.4 Mo", icon: FileText },
+  { title: "Normes et conformité", subtitle: "PDF · 1.8 Mo", icon: ShieldCheck },
+  { title: "Vidéos tutoriels", subtitle: "5 vidéos", icon: Video },
 ];
 
-export function TrainingStep() {
+export function TrainingStep({ goNext }: { goNext: () => void }) {
+  const markCompleted = useOnboardingStore((s) => s.markCompleted);
+
+  function handleContinue() {
+    markCompleted('training');
+    goNext();
+  }
+
   return (
     <div className="space-y-[24px]">
       <section>
@@ -62,6 +71,9 @@ export function TrainingStep() {
           <p className="text-[14px] font-black">Validation des formations</p>
           <p className="mt-1 text-[13px] text-ink-700">Une fois toutes les formations obligatoires complétées avec succès, vous pourrez passer au prochain étape : la signature du contrat.</p>
         </div>
+      </div>
+      <div className="flex justify-end">
+        <Button onClick={handleContinue} size="md">Continuer</Button>
       </div>
     </div>
   );
