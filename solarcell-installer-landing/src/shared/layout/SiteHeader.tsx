@@ -101,6 +101,13 @@ export function SiteHeader() {
             </span>
             <Button
               variant="outline"
+              className="hidden h-[44px] rounded-[7px] px-4 text-[14px] sm:inline-flex"
+              onClick={() => navigate('/onboarding/personal')}
+            >
+              Modifier mes informations
+            </Button>
+            <Button
+              variant="outline"
               className="h-[44px] rounded-[7px] px-4 text-[14px] disabled:opacity-70"
               onClick={handleLogout}
               disabled={loggingOut}

@@ -324,6 +324,27 @@ onboardingRouter.post('/wallet', requireAppId, async (req, res) => {
   }
 });
 
+// ── POST /api/onboarding/finalize ─────────────────────────────────────────────
+// Soumet le dossier après la dernière étape (wallet). Le modèle Odoo n'a pas de
+// statut « soumis » dédié (valeurs : draft / in_progress / validated / rejected) ;
+// « validated » étant réservé à la validation admin, on marque le dossier
+// « in_progress » et on efface l'étape courante (x_onboarding_step = false) pour
+// signaler que le parcours est terminé et en attente de validation. Finalisation
+// indulgente : on ne ré-exige pas les 7 étapes (contract n'est pas persisté côté BFF).
+onboardingRouter.post('/finalize', requireAppId, async (req, res) => {
+  const { applicationId } = req as any;
+  try {
+    const installerId = await getInstallerId(applicationId);
+    await odooWrite('x_solarcell_installer', [installerId], {
+      x_status: 'in_progress',
+      x_onboarding_step: false,
+    });
+    return res.json({ ok: true, installerId, status: 'submitted' });
+  } catch (err: unknown) {
+    return res.status(502).json({ error: 'odoo_error', message: (err as Error).message });
+  }
+});
+
 // ── POST /api/onboarding/training ─────────────────────────────────────────────
 onboardingRouter.post('/training', requireAppId, async (req, res) => {
   const { applicationId } = req as any;
