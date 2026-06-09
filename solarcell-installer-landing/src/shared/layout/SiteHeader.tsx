@@ -97,7 +97,7 @@ export function SiteHeader() {
               </span>
             )}
             <span className="hidden max-w-[150px] truncate text-[14px] font-semibold text-[#10262D] sm:block">
-              {user.name ?? user.email}
+              {user.email}
             </span>
             <Button
               variant="outline"
