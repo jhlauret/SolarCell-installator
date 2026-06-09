@@ -1,6 +1,6 @@
 import { Router, type Response } from 'express';
 import { config, assertFirebaseRest, assertOdooConfig } from '../config';
-import { signInWithPassword } from '../firebaseRest';
+import { signInWithPassword, registerWithPassword, sendPasswordReset, fetchSignInMethods } from '../firebaseRest';
 import { firebaseAdminAvailable, verifyIdToken } from '../firebase';
 import { syncInstaller } from '../odoo';
 import { exchangeCodeForClaims, googleConfigMissing, popupResultHtml } from '../googleOAuth';
@@ -44,6 +44,84 @@ authRouter.post('/login', async (req, res) => {
     const message = fbError ?? (err as Error)?.message ?? 'login_failed';
     const isAuthError = ['INVALID_PASSWORD', 'EMAIL_NOT_FOUND', 'INVALID_LOGIN_CREDENTIALS', 'USER_DISABLED'].includes(message);
     return res.status(isAuthError ? 401 : 502).json({ error: 'login_failed', message });
+  }
+});
+
+/**
+ * Création de compte email / mot de passe.
+ * Firebase crée l'utilisateur (accounts:signUp), puis on synchronise Odoo.
+ */
+authRouter.post('/register', async (req, res) => {
+  const { email, password } = req.body ?? {};
+  if (!email || !password) {
+    return res.status(400).json({ error: 'bad_request', message: 'email et password requis.' });
+  }
+  if (String(password).length < 8) {
+    return res.status(400).json({ error: 'bad_request', message: 'Le mot de passe doit faire au moins 8 caractères.' });
+  }
+  const missing = [...assertFirebaseRest(), ...assertOdooConfig()];
+  if (missing.length) return configMissing(res, missing);
+
+  try {
+    const user = await registerWithPassword(email, password);
+    const session = await syncInstaller({
+      uid: user.localId,
+      email: user.email,
+      name: user.displayName,
+      provider: 'password',
+      email_verified: false,
+    });
+    return res.json({
+      ...session,
+      user: { email: user.email, name: user.displayName, picture: user.profilePicture },
+    });
+  } catch (err: unknown) {
+    const fbError = (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error?.message;
+    const message = fbError ?? (err as Error)?.message ?? 'register_failed';
+    const isConflict = message === 'EMAIL_EXISTS';
+    return res.status(isConflict ? 409 : 502).json({ error: 'register_failed', message });
+  }
+});
+
+/**
+ * Envoi d'un email de réinitialisation de mot de passe Firebase.
+ * Fonctionne aussi pour les comptes Google : cela permet à l'utilisateur
+ * de définir un mot de passe email/password sans perdre son compte Google.
+ */
+authRouter.post('/forgot-password', async (req, res) => {
+  const { email } = req.body ?? {};
+  if (!email) {
+    return res.status(400).json({ error: 'bad_request', message: 'email requis.' });
+  }
+  const missing = assertFirebaseRest();
+  if (missing.length) return configMissing(res, missing);
+
+  try {
+    await sendPasswordReset(email);
+    return res.json({ ok: true });
+  } catch (err: unknown) {
+    const fbError = (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error?.message;
+    return res.status(502).json({ error: 'reset_failed', message: fbError ?? (err as Error)?.message });
+  }
+});
+
+/**
+ * Retourne les providers associés à un email Firebase.
+ * Utile côté client pour savoir si un compte existe et quel provider utiliser.
+ */
+authRouter.post('/check-provider', async (req, res) => {
+  const { email } = req.body ?? {};
+  if (!email) {
+    return res.status(400).json({ error: 'bad_request', message: 'email requis.' });
+  }
+  const missing = assertFirebaseRest();
+  if (missing.length) return configMissing(res, missing);
+
+  try {
+    const signinMethods = await fetchSignInMethods(email);
+    return res.json({ signinMethods });
+  } catch {
+    return res.json({ signinMethods: [] });
   }
 });
 
