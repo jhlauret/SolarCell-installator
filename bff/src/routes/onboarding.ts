@@ -14,6 +14,110 @@ function requireAppId(req: any, res: any, next: any) {
   next();
 }
 
+// ── GET /api/onboarding/data ──────────────────────────────────────────────────
+onboardingRouter.get('/data', async (req, res) => {
+  const applicationId = Number(req.query.applicationId);
+  if (!applicationId) return res.status(400).json({ error: 'bad_request', message: 'applicationId requis.' });
+
+  try {
+    // Personal
+    const installerIds = await odooSearch('x_solarcell_installer', [['x_application_id', '=', applicationId]]);
+    if (!installerIds.length) return res.json({});
+
+    const installerId = installerIds[0];
+    const [inst] = await odooRead('x_solarcell_installer', [installerId], [
+      'x_first_name', 'x_last_name', 'x_email', 'x_phone',
+      'x_address', 'x_zip', 'x_city', 'x_country',
+      'x_birth_date', 'x_birth_country', 'x_nationality',
+      'x_preferred_lang', 'x_timezone',
+    ]);
+
+    const personal = {
+      firstName:    str(inst.x_first_name),
+      lastName:     str(inst.x_last_name),
+      email:        str(inst.x_email),
+      phone:        str(inst.x_phone),
+      address:      str(inst.x_address),
+      zip:          str(inst.x_zip),
+      city:         str(inst.x_city),
+      country:      str(inst.x_country),
+      birthDate:    str(inst.x_birth_date),
+      birthCountry: str(inst.x_birth_country),
+      nationality:  str(inst.x_nationality),
+      preferredLang: str(inst.x_preferred_lang) || 'fr',
+      timezone:     str(inst.x_timezone),
+    };
+
+    // Professional
+    let professional: Record<string, unknown> | undefined;
+    const compIds = await odooSearch('x_solarcell_installer_company', [['x_installer_id', '=', installerId]]);
+    if (compIds.length) {
+      const [comp] = await odooRead('x_solarcell_installer_company', [compIds[0]], [
+        'x_company_type', 'x_name', 'x_siret', 'x_vat_number', 'x_ape_code',
+        'x_pro_address', 'x_pro_zip', 'x_pro_city', 'x_pro_country',
+        'x_pro_phone', 'x_pro_email', 'x_creation_year', 'x_employee_range', 'x_main_activity',
+      ]);
+      professional = {
+        companyType:   str(comp.x_company_type),
+        companyName:   str(comp.x_name),
+        siret:         str(comp.x_siret),
+        vatNumber:     str(comp.x_vat_number),
+        apeCode:       str(comp.x_ape_code),
+        proAddress:    str(comp.x_pro_address),
+        proZip:        str(comp.x_pro_zip),
+        proCity:       str(comp.x_pro_city),
+        proCountry:    str(comp.x_pro_country),
+        proPhone:      str(comp.x_pro_phone),
+        proEmail:      str(comp.x_pro_email),
+        creationYear:  comp.x_creation_year ? String(comp.x_creation_year) : '',
+        employeeRange: str(comp.x_employee_range),
+        mainActivity:  str(comp.x_main_activity),
+      };
+    }
+
+    // Skills
+    const skillIds = await odooSearch('x_solarcell_installer_skill', [['x_installer_id', '=', installerId]]);
+    let skills: Record<string, unknown> | undefined;
+    if (skillIds.length) {
+      const skillRecs = await odooRead('x_solarcell_installer_skill', skillIds, [
+        'x_domain', 'x_level', 'x_years_experience', 'x_installations',
+      ]);
+      const selected = skillRecs.map((s: any) => str(s.x_domain)).filter(Boolean);
+      const levels: Record<string, string> = {};
+      let yearsExperience = '';
+      let installations = '';
+      for (const s of skillRecs as any[]) {
+        if (s.x_domain) levels[s.x_domain] = str(s.x_level) || 'intermediate';
+        if (s.x_years_experience) yearsExperience = str(s.x_years_experience);
+        if (s.x_installations) installations = str(s.x_installations);
+      }
+      skills = { selected, levels, yearsExperience, installations };
+    }
+
+    // Wallet
+    const walletIds = await odooSearch('x_solarcell_installer_wallet', [['x_installer_id', '=', installerId]]);
+    let wallet: Record<string, unknown> | undefined;
+    if (walletIds.length) {
+      const [w] = await odooRead('x_solarcell_installer_wallet', [walletIds[0]], [
+        'x_wallet_type', 'x_recovery_confirmed',
+      ]);
+      wallet = {
+        walletType: str(w.x_wallet_type) || 'integrated',
+        recoveryConfirmed: Boolean(w.x_recovery_confirmed),
+      };
+    }
+
+    return res.json({ personal, professional, skills, wallet });
+  } catch (err: unknown) {
+    return res.status(502).json({ error: 'odoo_error', message: (err as Error).message });
+  }
+});
+
+function str(val: unknown): string {
+  if (!val || val === false) return '';
+  return String(val);
+}
+
 // ── GET /api/onboarding/status ────────────────────────────────────────────────
 onboardingRouter.get('/status', async (req, res) => {
   const applicationId = Number(req.query.applicationId);

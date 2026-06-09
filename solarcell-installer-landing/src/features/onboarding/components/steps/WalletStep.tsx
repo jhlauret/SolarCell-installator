@@ -1,16 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Check, Circle, CircleDot, ListChecks, LockKeyhole, ShieldCheck, TriangleAlert, WalletCards } from 'lucide-react';
 import type { ComponentType } from 'react';
 import type { LucideProps } from 'lucide-react';
 import { IconBadge } from '../../ui/IconBadge';
 import { useStepSubmit } from '../../hooks/useStepSubmit';
 import { saveWalletStep } from '../../api/onboardingApi';
+import type { OnboardingPrefillData } from '../../api/onboardingApi';
 import { Button } from '../../../../shared/ui/Button';
 
-export function WalletStep({ goNext }: { goNext: () => void }) {
-  const [walletType, setWalletType] = useState<'integrated' | 'external'>('integrated');
-  const [recoveryConfirmed, setRecoveryConfirmed] = useState(false);
+type Props = { goNext: () => void; initialData?: OnboardingPrefillData['wallet'] };
+
+export function WalletStep({ goNext, initialData }: Props) {
+  const [walletType, setWalletType] = useState<'integrated' | 'external'>(initialData?.walletType ?? 'integrated');
+  const [recoveryConfirmed, setRecoveryConfirmed] = useState(initialData?.recoveryConfirmed ?? false);
   const { submit, loading, error, saved } = useStepSubmit('wallet', saveWalletStep);
+
+  useEffect(() => {
+    if (!initialData) return;
+    if (initialData.walletType)        setWalletType(initialData.walletType);
+    if (initialData.recoveryConfirmed) setRecoveryConfirmed(initialData.recoveryConfirmed);
+  }, [initialData]);
 
   async function handleSave() {
     const ok = await submit({ walletType, recoveryConfirmed });

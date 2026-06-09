@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BatteryCharging, Cable, Check, Plus, SunMedium, SquareCheckBig } from 'lucide-react';
 import type { ComponentType } from 'react';
 import type { LucideProps } from 'lucide-react';
@@ -8,6 +8,7 @@ import { IconBadge } from '../../ui/IconBadge';
 import { clsx } from '../../../../shared/ui/clsx';
 import { useStepSubmit } from '../../hooks/useStepSubmit';
 import { saveSkillsStep } from '../../api/onboardingApi';
+import type { OnboardingPrefillData } from '../../api/onboardingApi';
 
 const SKILL_DEFS: Array<{ domain: string; label: string; desc: string; icon: ComponentType<LucideProps> }> = [
   { domain: 'solar_panels', label: 'Panneaux solaires', desc: 'Installation, fixation et raccordement de panneaux photovoltaïques.', icon: SunMedium },
@@ -19,11 +20,21 @@ const SKILL_DEFS: Array<{ domain: string; label: string; desc: string; icon: Com
 const LEVELS = ['beginner', 'intermediate', 'advanced', 'expert'] as const;
 const LEVEL_LABELS: Record<string, string> = { beginner: 'Débutant', intermediate: 'Intermédiaire', advanced: 'Avancé', expert: 'Expert' };
 
-export function SkillsStep({ goNext }: { goNext: () => void }) {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [levels, setLevels] = useState<Record<string, string>>({});
-  const [yearsExp, setYearsExp] = useState('');
-  const [installations, setInstallations] = useState('');
+type Props = { goNext: () => void; initialData?: OnboardingPrefillData['skills'] };
+
+export function SkillsStep({ goNext, initialData }: Props) {
+  const [selected, setSelected] = useState<Set<string>>(new Set(initialData?.selected ?? []));
+  const [levels, setLevels] = useState<Record<string, string>>(initialData?.levels ?? {});
+  const [yearsExp, setYearsExp] = useState(initialData?.yearsExperience ?? '');
+  const [installations, setInstallations] = useState(initialData?.installations ?? '');
+
+  useEffect(() => {
+    if (!initialData) return;
+    if (initialData.selected?.length)  setSelected(new Set(initialData.selected));
+    if (initialData.levels)            setLevels(initialData.levels);
+    if (initialData.yearsExperience)   setYearsExp(initialData.yearsExperience);
+    if (initialData.installations)     setInstallations(initialData.installations);
+  }, [initialData]);
   const { submit, loading, error, saved } = useStepSubmit('skills', saveSkillsStep);
 
   function toggleSkill(domain: string) {
