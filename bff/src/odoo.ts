@@ -2,12 +2,9 @@ import axios from 'axios';
 import { config } from './config';
 
 /**
- * Appelle l'endpoint Odoo `POST /solar/firebase/sync` (controller `type='json'`
- * du module `solarcell_installer_onboarding`). On envoie les claims Firebase
- * DÉJÀ vérifiés, protégés par l'en-tête secret `X-SolarCell-Api-Key`.
- *
- * Comme le controller Odoo est de type JSON-RPC, la charge utile est encapsulée
- * dans `{ jsonrpc, method, params }` et la réponse est lue dans `result`.
+ * Appelle l'endpoint Odoo `POST /solar/firebase/sync`.
+ * Le controller lit directement le body JSON (pas de wrapper JSON-RPC).
+ * La clé secrète est transmise via l'en-tête `X-SolarCell-Api-Key`.
  */
 export type InstallerClaims = {
   uid: string;
@@ -28,7 +25,7 @@ export async function syncInstaller(claims: InstallerClaims): Promise<InstallerS
   const endpoint = `${config.odoo.url.replace(/\/$/, '')}/solar/firebase/sync`;
   const { data } = await axios.post(
     endpoint,
-    { jsonrpc: '2.0', method: 'call', params: { ...claims, db: config.odoo.db } },
+    { ...claims },
     {
       headers: {
         'Content-Type': 'application/json',
@@ -38,12 +35,12 @@ export async function syncInstaller(claims: InstallerClaims): Promise<InstallerS
     },
   );
 
-  if (data?.error) {
-    const message = data.error?.data?.message ?? data.error?.message ?? 'Erreur Odoo inconnue';
+  const result = data?.result ?? data;
+
+  if (result?.error) {
+    const message = result.error?.message ?? 'Erreur Odoo inconnue';
     throw new Error(`Odoo: ${message}`);
   }
-
-  const result = data?.result ?? data;
   return {
     applicationId: result.applicationId,
     partnerId: result.partnerId,

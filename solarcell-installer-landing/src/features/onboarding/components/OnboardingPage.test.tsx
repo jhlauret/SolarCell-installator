@@ -19,18 +19,15 @@ describe('SolarCell onboarding', () => {
     expect(screen.getByText('Étape 1 sur 7')).toBeInTheDocument();
   });
 
-  it('navigates through the 7-step flow with the next button', async () => {
-    const user = userEvent.setup();
+  it('renders the save-and-continue button on the personal step', () => {
     renderAt();
-    await user.click(screen.getByRole('button', { name: /suivant/i }));
-    expect(screen.getByRole('heading', { name: 'Informations professionnelles' })).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: /suivant/i }));
-    expect(screen.getByRole('heading', { name: 'Compétences' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sauvegarder et continuer/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /précédent/i })).toBeDisabled();
   });
 
-  it('renders the wallet completion call to action on step 7', () => {
+  it('renders the wallet activation button on step 7', () => {
     renderAt('/onboarding/wallet');
     expect(screen.getByRole('heading', { name: 'Wallet SolarCell' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /terminer l’inscription/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /activer mon wallet/i })).toBeInTheDocument();
   });
 });

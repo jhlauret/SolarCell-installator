@@ -24,14 +24,11 @@ export function OnboardingMain({ currentStep, previousStep, nextStep, goNext, go
         <h1 className="text-[36px] font-black leading-[1.1] tracking-[-0.045em] text-ink-900">{currentStep.title}</h1>
         <p className="mt-[14px] max-w-[760px] whitespace-pre-line text-[15px] leading-[1.55] text-ink-700">{currentStep.description}</p>
         <div className="mt-[24px]">
-          <StepRenderer stepId={currentStep.id} />
+          <StepRenderer stepId={currentStep.id} goNext={goNext} />
         </div>
         <div className="mt-[28px] flex items-center justify-between">
           <Button size="sm" variant="outline" onClick={goPrevious} disabled={!previousStep} leftIcon={<ArrowLeft size={20} />}>
             Précédent
-          </Button>
-          <Button size="sm" onClick={goNext} rightIcon={nextStep ? <ArrowRight size={19} /> : <Check size={20} />}>
-            {nextStep ? 'Suivant' : "Terminer l’inscription"}
           </Button>
         </div>
       </section>
@@ -39,22 +36,22 @@ export function OnboardingMain({ currentStep, previousStep, nextStep, goNext, go
   );
 }
 
-function StepRenderer({ stepId }: { stepId: OnboardingStep['id'] }) {
+function StepRenderer({ stepId, goNext }: { stepId: OnboardingStep['id']; goNext: () => void }) {
   switch (stepId) {
     case 'personal':
-      return <PersonalStep />;
+      return <PersonalStep goNext={goNext} />;
     case 'professional':
-      return <ProfessionalStep />;
+      return <ProfessionalStep goNext={goNext} />;
     case 'skills':
-      return <SkillsStep />;
+      return <SkillsStep goNext={goNext} />;
     case 'documents':
-      return <DocumentsStep />;
+      return <DocumentsStep goNext={goNext} />;
     case 'training':
-      return <TrainingStep />;
+      return <TrainingStep goNext={goNext} />;
     case 'contract':
-      return <ContractStep />;
+      return <ContractStep goNext={goNext} />;
     case 'wallet':
-      return <WalletStep />;
+      return <WalletStep goNext={goNext} />;
     default:
       return null;
   }
