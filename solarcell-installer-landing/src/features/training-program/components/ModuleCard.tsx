@@ -1,7 +1,11 @@
 import { BookOpen, Check, Clock3, FileText, PlaySquare } from 'lucide-react';
 import { ProgressRing } from '../ui/ProgressRing';
 import { useTrainingProgressStore } from '../hooks/useTrainingProgressStore';
+import { useSessionStore } from '../../auth/store/useSessionStore';
+import { useAuthModalStore } from '../../auth/store/useAuthModalStore';
 import type { TrainingModule } from '../types/training';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
 function statusLabel(status: TrainingModule['status']) {
   if (status === 'completed') return 'Terminé';
@@ -12,9 +16,24 @@ function statusLabel(status: TrainingModule['status']) {
 export function ModuleCard({ module }: { module: TrainingModule }) {
   const Icon = module.icon;
   const openCourse = useTrainingProgressStore((state) => state.openCourse);
+  const user = useSessionStore((state) => state.user);
+  const openAuthModal = useAuthModalStore((state) => state.open);
 
   const handleAccessCourse = () => {
     openCourse(module.courseKey);
+    if (module.externalUrl) {
+      // Module 3 : redirige vers le syllabus Odoo (page de cours Odoo Learning).
+      // On passe par le SSO du BFF (/api/learning/odoo-sso) pour que l'utilisateur
+      // arrive déjà authentifié sur Odoo via son identité Google/Firebase — sans
+      // ressaisir d'identifiants. S'il n'est pas connecté, on ouvre le modal de login.
+      if (!user?.applicationId) {
+        openAuthModal();
+        return;
+      }
+      const ssoUrl = `${API_BASE}/learning/odoo-sso?applicationId=${user.applicationId}&course=${encodeURIComponent(module.id)}`;
+      window.open(ssoUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
     // À connecter à React Router pour vos pages internes ou au BFF Odoo Learning.
     window.history.pushState(null, '', module.route);
   };
