@@ -42,6 +42,12 @@ export function googleLoginUrl(): string {
   return `${base}/auth/google`;
 }
 
+/** URL de redirection SSO « 1 clic » vers le portail Odoo de l'installateur connecté. */
+export function odooSsoUrl(applicationId: number): string {
+  const base = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
+  return `${base}/auth/odoo-sso?applicationId=${applicationId}`;
+}
+
 /** Aplatit la réponse BFF (session + profil) en un utilisateur stockable. */
 export function toAuthUser(response: LoginResponse): AuthUser {
   return {

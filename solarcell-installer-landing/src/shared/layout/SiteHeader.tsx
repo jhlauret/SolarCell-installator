@@ -7,7 +7,7 @@ import { useLandingNavigation } from '../../hooks/useLandingNavigation';
 import { useLandingStore } from '../../store/useLandingStore';
 import { useAuthModalStore } from '../../features/auth/store/useAuthModalStore';
 import { useSessionStore } from '../../features/auth/store/useSessionStore';
-import { logout } from '../../features/auth/api/authApi';
+import { logout, odooSsoUrl } from '../../features/auth/api/authApi';
 import type { AuthUser } from '../../features/auth/types';
 
 /** Deux premières initiales (nom sinon email) pour l'avatar de repli. */
@@ -99,6 +99,14 @@ export function SiteHeader() {
             <span className="hidden max-w-[150px] truncate text-[14px] font-semibold text-[#10262D] sm:block">
               {user.email}
             </span>
+            <a
+              href={odooSsoUrl(user.applicationId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden h-[44px] items-center rounded-[7px] border border-[#1E8E4C] px-4 text-[14px] font-semibold text-[#1E8E4C] sm:inline-flex"
+            >
+              Accéder à mon espace Odoo
+            </a>
             <Button
               variant="outline"
               className="hidden h-[44px] rounded-[7px] px-4 text-[14px] sm:inline-flex"

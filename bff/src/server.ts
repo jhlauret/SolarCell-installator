@@ -3,6 +3,7 @@ import cors from 'cors';
 import { config } from './config';
 import { authRouter } from './routes/auth';
 import { onboardingRouter } from './routes/onboarding';
+import { learningRouter } from './routes/learning';
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json({ limit: '20mb' }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/auth', authRouter);
 app.use('/api/onboarding', onboardingRouter);
+app.use('/api/learning', learningRouter);
 
 app.listen(config.port, () => {
   // eslint-disable-next-line no-console
