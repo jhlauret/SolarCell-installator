@@ -7,7 +7,7 @@
 Monorepo **deux-parties** (BFF + SPA React) — zéro dépendance Firebase côté client, sécurité maximale.
 
 ```
-ravalec/
+Solarcell-installator/
 ├── 📱 solarcell-installer-landing/      (Frontend - React 18 + Vite + TS)
 │   ├── src/
 │   │   ├── features/                     ⭐ Modulaire : features indépendantes
