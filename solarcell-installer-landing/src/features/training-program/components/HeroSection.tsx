@@ -8,7 +8,7 @@ export function HeroSection() {
         <div className="mb-4 inline-flex items-center gap-2 rounded-xl border border-solar-200 bg-white px-4 py-2 text-sm font-bold text-solar-700 shadow-sm">
           <BadgeCheck className="h-5 w-5" /> Parcours certifiant
         </div>
-        <h1 className="max-w-[620px] text-[54px] font-black leading-[0.98] tracking-[-0.04em] text-ink md:text-[64px]">
+        <h1 className="max-w-[620px] text-[36px] font-black leading-[1.05] tracking-[-0.04em] text-ink sm:text-[44px] sm:leading-[0.98] md:text-[64px]">
           Parcours de <br /> formation <span className="text-solar-600">SolarCell</span>
         </h1>
         <p className="mt-5 max-w-[570px] text-lg leading-8 text-slate-600">
@@ -42,7 +42,7 @@ function CourseOverviewCard() {
   ];
 
   return (
-    <aside className="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+    <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-soft sm:p-8">
       <h2 className="mb-7 text-2xl font-extrabold text-ink">Votre parcours en un coup d’œil</h2>
       <div className="grid gap-8 xl:grid-cols-[1.05fr_1fr]">
         <div className="space-y-7">

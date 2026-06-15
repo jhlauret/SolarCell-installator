@@ -11,9 +11,9 @@ export function ImpactPanel() {
     <section
       id="program"
       data-testid="impact-panel"
-      className="mt-[22px] grid min-h-[245px] overflow-hidden rounded-[15px] bg-[linear-gradient(135deg,#052D36_0%,#062B34_53%,#082D36_100%)] text-white shadow-[0_24px_58px_rgba(8,43,51,0.20)] lg:grid-cols-[385px_1fr_360px]"
+      className="mt-[22px] grid min-h-[245px] grid-cols-1 overflow-hidden rounded-[15px] bg-[linear-gradient(135deg,#052D36_0%,#062B34_53%,#082D36_100%)] text-white shadow-[0_24px_58px_rgba(8,43,51,0.20)] md:grid-cols-2 lg:grid-cols-[385px_1fr_360px]"
     >
-      <div className="relative px-[40px] pb-[32px] pt-[42px]">
+      <div className="relative px-5 pb-[32px] pt-[42px] sm:px-8 lg:px-[40px]">
         <h2 className="text-[25px] font-extrabold leading-[1.28] tracking-[-0.038em]">
           Ensemble, construisons
           <span className="block text-[#5DBD50]">un avenir plus durable.</span>
@@ -31,7 +31,7 @@ export function ImpactPanel() {
         {metrics.map((metric, index) => (
           <div
             key={metric.label}
-            className={`flex flex-col items-center justify-center px-4 py-8 text-center ${index > 0 ? 'md:border-l md:border-white/10' : ''}`}
+            className={`flex flex-col items-center justify-center px-3 py-5 text-center sm:px-4 sm:py-8 ${index > 0 ? 'md:border-l md:border-white/10' : ''}`}
           >
             <Icon name={metric.icon} className="h-[54px] w-[54px] text-[#4EB654]" strokeWidth={2.6} />
             <strong className="mt-[11px] block text-[26px] font-black leading-none tracking-[-0.045em] text-[#55B64F]">
@@ -42,13 +42,13 @@ export function ImpactPanel() {
         ))}
       </div>
 
-      <aside className="px-[52px] pb-[31px] pt-[43px]">
+      <aside className="px-5 pb-[31px] pt-[43px] sm:px-8 md:col-span-2 lg:col-span-1 lg:px-[52px]">
         <h3 className="text-[25px] font-extrabold tracking-[-0.04em]">Prêt à commencer ?</h3>
         <p className="mt-[14px] max-w-[240px] text-[16px] font-medium leading-[1.5] text-white/92">
           Rejoignez notre réseau d’installateurs partenaires.
         </p>
         <Button
-          className="mt-[23px] h-[54px] w-[223px] rounded-[7px] text-[15px]"
+          className="mt-[23px] h-[54px] w-full rounded-[7px] text-[15px] sm:w-[223px]"
           onClick={() => navigate('/onboarding/personal')}
         >
           {user ? 'Modifier mes informations' : 'Créer mon compte'}

@@ -16,6 +16,8 @@ export type TrainingModule = {
   resources: number;
   bullets: string[];
   icon: LucideIcon;
+  /** URL externe optionnelle (ex. page de cours Odoo Learning) ouverte au lieu de la route interne. */
+  externalUrl?: string;
 };
 
 export type LearningBenefit = {

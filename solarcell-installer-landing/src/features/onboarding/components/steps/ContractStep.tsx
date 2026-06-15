@@ -44,8 +44,8 @@ export function ContractStep({ goNext }: { goNext: () => void }) {
       <section className="overflow-hidden rounded-[9px] border border-ink-200 bg-white shadow-card">
         <h2 className="px-[22px] pt-[16px] text-[18px] font-black">Aperçu du contrat</h2>
         <div className="m-[22px] mt-[12px] overflow-hidden rounded-[5px] border border-ink-200">
-          <div className="flex h-[43px] items-center justify-between border-b border-ink-200 bg-white px-[14px] text-ink-700">
-            <div className="flex items-center gap-[22px]">
+          <div className="scrollbar-thin flex h-[43px] items-center justify-between gap-3 overflow-x-auto border-b border-ink-200 bg-white px-[14px] text-ink-700">
+            <div className="flex shrink-0 items-center gap-[14px] sm:gap-[22px]">
               <FileText size={18} />
               <Search size={19} />
               <ChevronDown className="rotate-180" size={18} />
@@ -53,7 +53,7 @@ export function ContractStep({ goNext }: { goNext: () => void }) {
               <span className="rounded-[5px] border border-ink-200 px-[14px] py-[5px] text-[13px] text-ink-900">1</span>
               <span className="text-[13px] text-ink-900">/ 12</span>
             </div>
-            <div className="flex items-center gap-[18px]">
+            <div className="flex shrink-0 items-center gap-[12px] sm:gap-[18px]">
               <Minus size={18} />
               <Plus size={18} />
               <button className="rounded-[5px] border border-ink-200 px-[10px] py-[6px] text-[12px]">Zoom automatique</button>
@@ -61,7 +61,7 @@ export function ContractStep({ goNext }: { goNext: () => void }) {
               <Maximize2 size={18} />
             </div>
           </div>
-          <div className="scrollbar-thin h-[405px] overflow-y-auto bg-white px-[46px] py-[38px]">
+          <div className="scrollbar-thin h-[405px] overflow-y-auto bg-white px-4 py-6 sm:px-[46px] sm:py-[38px]">
             <div className="mb-[30px] flex items-start justify-between">
               <div className="text-[25px] font-black tracking-[-0.05em] text-[#073b36]">☀︎ SolarCell</div>
               <div className="text-right text-[13px] font-bold leading-[1.4]">

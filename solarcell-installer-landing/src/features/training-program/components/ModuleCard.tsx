@@ -1,7 +1,11 @@
 import { BookOpen, Check, Clock3, FileText, PlaySquare } from 'lucide-react';
 import { ProgressRing } from '../ui/ProgressRing';
 import { useTrainingProgressStore } from '../hooks/useTrainingProgressStore';
+import { useSessionStore } from '../../auth/store/useSessionStore';
+import { useAuthModalStore } from '../../auth/store/useAuthModalStore';
 import type { TrainingModule } from '../types/training';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
 function statusLabel(status: TrainingModule['status']) {
   if (status === 'completed') return 'Terminé';
@@ -12,15 +16,30 @@ function statusLabel(status: TrainingModule['status']) {
 export function ModuleCard({ module }: { module: TrainingModule }) {
   const Icon = module.icon;
   const openCourse = useTrainingProgressStore((state) => state.openCourse);
+  const user = useSessionStore((state) => state.user);
+  const openAuthModal = useAuthModalStore((state) => state.open);
 
   const handleAccessCourse = () => {
     openCourse(module.courseKey);
+    if (module.externalUrl) {
+      // Module 3 : redirige vers le syllabus Odoo (page de cours Odoo Learning).
+      // On passe par le SSO du BFF (/api/learning/odoo-sso) pour que l'utilisateur
+      // arrive déjà authentifié sur Odoo via son identité Google/Firebase — sans
+      // ressaisir d'identifiants. S'il n'est pas connecté, on ouvre le modal de login.
+      if (!user?.applicationId) {
+        openAuthModal();
+        return;
+      }
+      const ssoUrl = `${API_BASE}/learning/odoo-sso?applicationId=${user.applicationId}&course=${encodeURIComponent(module.id)}`;
+      window.open(ssoUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
     // À connecter à React Router pour vos pages internes ou au BFF Odoo Learning.
     window.history.pushState(null, '', module.route);
   };
 
   return (
-    <article className="grid gap-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[132px_1.2fr_1.25fr_150px_132px_180px] lg:items-center">
+    <article className="grid grid-cols-1 gap-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[132px_1.2fr_1.25fr_150px_132px_180px] lg:items-center">
       <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-solar-50 text-solar-600">
         <Icon className="h-24 w-24" strokeWidth={1.7} />
       </div>
@@ -40,7 +59,7 @@ export function ModuleCard({ module }: { module: TrainingModule }) {
         ))}
       </ul>
 
-      <div className="space-y-3 border-l border-slate-200 pl-6 text-sm font-semibold text-slate-600">
+      <div className="space-y-3 text-sm font-semibold text-slate-600 lg:border-l lg:border-slate-200 lg:pl-6">
         <p className="flex items-center gap-3"><Clock3 className="h-4 w-4" /> {module.duration}</p>
         <p className="flex items-center gap-3"><PlaySquare className="h-4 w-4" /> {module.videos} vidéos</p>
         <p className="flex items-center gap-3"><FileText className="h-4 w-4" /> {module.resources} ressources</p>

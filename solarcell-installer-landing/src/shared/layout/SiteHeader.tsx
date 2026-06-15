@@ -1,5 +1,6 @@
 import { useState, type MouseEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { BrandLogo } from '../ui/BrandLogo';
 import { Button } from '../ui/Button';
 import { Icon } from '../ui/Icon';
@@ -7,7 +8,7 @@ import { useLandingNavigation } from '../../hooks/useLandingNavigation';
 import { useLandingStore } from '../../store/useLandingStore';
 import { useAuthModalStore } from '../../features/auth/store/useAuthModalStore';
 import { useSessionStore } from '../../features/auth/store/useSessionStore';
-import { logout } from '../../features/auth/api/authApi';
+import { logout, odooSsoUrl } from '../../features/auth/api/authApi';
 import type { AuthUser } from '../../features/auth/types';
 
 /** Deux premières initiales (nom sinon email) pour l'avatar de repli. */
@@ -32,6 +33,7 @@ export function SiteHeader() {
   const user = useSessionStore((state) => state.user);
   const clearSession = useSessionStore((state) => state.clear);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -49,7 +51,7 @@ export function SiteHeader() {
     <header className="relative z-30 mx-auto flex h-[99px] w-full max-w-[1415px] items-center justify-between px-4 pt-[2px] sm:px-6 lg:px-0">
       <BrandLogo />
 
-      <nav className="hidden items-center gap-[30px] lg:flex" aria-label="Navigation principale">
+      <nav className="hidden items-center gap-[30px] xl:flex" aria-label="Navigation principale">
         {items.map((item) => {
           const isRoute = item.href.startsWith('/');
           const active = isRoute ? pathname === item.href : item.active;
@@ -76,7 +78,7 @@ export function SiteHeader() {
         })}
       </nav>
 
-      <div className="flex items-center gap-[18px]">
+      <div className="flex items-center gap-[12px] sm:gap-[18px]">
         <button className="hidden items-center gap-[7px] text-[14px] font-semibold text-[#10262D] sm:flex" type="button" aria-label="Changer de langue">
           <Icon name="language" className="h-[21px] w-[21px]" />
           {language}
@@ -99,6 +101,14 @@ export function SiteHeader() {
             <span className="hidden max-w-[150px] truncate text-[14px] font-semibold text-[#10262D] sm:block">
               {user.email}
             </span>
+            <a
+              href={odooSsoUrl(user.applicationId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden h-[44px] items-center rounded-[7px] border border-[#1E8E4C] px-4 text-[14px] font-semibold text-[#1E8E4C] sm:inline-flex"
+            >
+              Accéder à mon espace Odoo
+            </a>
             <Button
               variant="outline"
               className="hidden h-[44px] rounded-[7px] px-4 text-[14px] sm:inline-flex"
@@ -108,7 +118,7 @@ export function SiteHeader() {
             </Button>
             <Button
               variant="outline"
-              className="h-[44px] rounded-[7px] px-4 text-[14px] disabled:opacity-70"
+              className="hidden h-[44px] rounded-[7px] px-4 text-[14px] disabled:opacity-70 sm:inline-flex"
               onClick={handleLogout}
               disabled={loggingOut}
             >
@@ -125,14 +135,108 @@ export function SiteHeader() {
               Se connecter
             </Button>
             <Button
-              className="h-[44px] w-[132px] rounded-[7px] px-0 text-[14px]"
+              className="hidden h-[44px] w-[132px] rounded-[7px] px-0 text-[14px] sm:inline-flex"
               onClick={() => navigate('/onboarding/personal')}
             >
               S’inscrire
             </Button>
           </>
         )}
+
+        <button
+          type="button"
+          aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-expanded={mobileMenuOpen}
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          className="grid h-[44px] w-[44px] shrink-0 place-items-center rounded-[7px] border border-[#E2E6E9] text-[#10262D] xl:hidden"
+        >
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </div>
+
+      {mobileMenuOpen && (
+        <div className="absolute left-0 top-full z-40 w-full border-b border-[#E2E6E9] bg-white px-4 py-4 shadow-lg sm:px-6 xl:hidden">
+          <nav className="flex flex-col gap-1" aria-label="Navigation principale mobile">
+            {items.map((item) => {
+              const isRoute = item.href.startsWith('/');
+              const active = isRoute ? pathname === item.href : item.active;
+              const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+                setActiveSection(item.label);
+                setMobileMenuOpen(false);
+                if (isRoute) {
+                  event.preventDefault();
+                  navigate(item.href);
+                }
+              };
+              return (
+                <a
+                  key={item.label}
+                  href={isRoute ? item.href : `/${item.href}`}
+                  onClick={handleClick}
+                  className={`rounded-[7px] px-3 py-3 text-[15px] font-semibold tracking-[-0.01em] transition ${
+                    active ? 'bg-greenSoft text-[#278B39]' : 'text-[#0F2530] hover:bg-solar-50 hover:text-[#278B39]'
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </nav>
+
+          <div className="mt-3 flex flex-col gap-2 border-t border-[#E2E6E9] pt-3">
+            <button className="flex items-center gap-[7px] px-3 py-2 text-[14px] font-semibold text-[#10262D]" type="button" aria-label="Changer de langue">
+              <Icon name="language" className="h-[21px] w-[21px]" />
+              {language}
+              <Icon name="chevron" className="h-[15px] w-[15px]" strokeWidth={2.7} />
+            </button>
+
+            {user ? (
+              <>
+                <span className="truncate px-3 text-[14px] font-semibold text-[#10262D]">{user.email}</span>
+                <a
+                  href={odooSsoUrl(user.applicationId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-[44px] items-center justify-center rounded-[7px] border border-[#1E8E4C] px-4 text-[14px] font-semibold text-[#1E8E4C]"
+                >
+                  Accéder à mon espace Odoo
+                </a>
+                <Button
+                  variant="outline"
+                  className="h-[44px] w-full rounded-[7px] px-4 text-[14px]"
+                  onClick={() => { setMobileMenuOpen(false); navigate('/onboarding/personal'); }}
+                >
+                  Modifier mes informations
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-[44px] w-full rounded-[7px] px-4 text-[14px] disabled:opacity-70"
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                >
+                  {loggingOut ? 'Déconnexion…' : 'Déconnecter'}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  className="h-[44px] w-full rounded-[7px] px-0 text-[14px]"
+                  onClick={() => { setMobileMenuOpen(false); openLoginModal(); }}
+                >
+                  Se connecter
+                </Button>
+                <Button
+                  className="h-[44px] w-full rounded-[7px] px-0 text-[14px]"
+                  onClick={() => { setMobileMenuOpen(false); navigate('/onboarding/personal'); }}
+                >
+                  S’inscrire
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

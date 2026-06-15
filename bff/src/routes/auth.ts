@@ -4,6 +4,8 @@ import { signInWithPassword, registerWithPassword, sendPasswordReset, fetchSignI
 import { firebaseAdminAvailable, verifyIdToken } from '../firebase';
 import { syncInstaller } from '../odoo';
 import { exchangeCodeForClaims, googleConfigMissing, popupResultHtml } from '../googleOAuth';
+import { odooSearch, odooRead } from '../odooXmlRpc';
+import { odooSsoUrl } from '../sso';
 
 export const authRouter = Router();
 
@@ -226,5 +228,35 @@ authRouter.get('/google/callback', async (req, res) => {
     );
   } catch (err: unknown) {
     return res.send(popupResultHtml({ type: 'solarcell-sso', ok: false, error: (err as Error)?.message ?? 'google_failed' }, origin));
+  }
+});
+
+/**
+ * SSO "1 clic" vers le portail Odoo. L'utilisateur est déjà authentifié côté
+ * webapp (via le BFF) ; on retrouve son email à partir de son applicationId,
+ * on génère un jeton signé (HMAC, clé partagée `solarcell.internal_api_key`)
+ * et on redirige vers `/solar/sso/login` qui ouvrira une session Odoo.
+ */
+authRouter.get('/odoo-sso', async (req, res) => {
+  const applicationId = Number(req.query.applicationId);
+  if (!applicationId) {
+    return res.status(400).json({ error: 'bad_request', message: 'applicationId requis.' });
+  }
+  const missing = assertOdooConfig();
+  if (missing.length) return configMissing(res, missing);
+
+  try {
+    const installerIds = await odooSearch('x_solarcell_installer', [['x_application_id', '=', applicationId]]);
+    if (!installerIds.length) {
+      return res.status(404).json({ error: 'not_found', message: 'Dossier installateur introuvable.' });
+    }
+    const [inst] = await odooRead('x_solarcell_installer', [installerIds[0]], ['x_email']);
+    const email = String(inst?.x_email ?? '').trim();
+    if (!email) {
+      return res.status(404).json({ error: 'not_found', message: 'Email installateur introuvable.' });
+    }
+    return res.redirect(odooSsoUrl(email));
+  } catch (err: unknown) {
+    return res.status(502).json({ error: 'sso_failed', message: (err as Error)?.message ?? 'sso_failed' });
   }
 });

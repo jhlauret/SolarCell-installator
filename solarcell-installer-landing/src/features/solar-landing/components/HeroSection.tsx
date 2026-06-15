@@ -10,11 +10,11 @@ export function HeroSection({ children }: PropsWithChildren) {
   const navigate = useNavigate();
   const user = useSessionStore((s) => s.user);
   return (
-    <section className="relative min-h-[611px] overflow-hidden lg:min-h-[612px]">
+    <section className="relative min-h-[480px] overflow-hidden sm:min-h-[560px] lg:min-h-[611px]">
       <img
         src={heroImage}
         alt="Installateur SolarCell sur une toiture photovoltaïque"
-        className="absolute right-0 top-[35px] h-[566px] w-[66.4vw] min-w-[780px] object-cover object-center opacity-100 max-lg:right-[-230px] max-lg:opacity-35"
+        className="absolute right-0 top-[35px] h-[320px] w-full object-cover object-center opacity-35 sm:h-[420px] sm:opacity-35 lg:h-[566px] lg:w-[66.4vw] lg:min-w-[780px] lg:opacity-100 max-lg:right-0"
       />
       <div className="hero-soft-mask absolute inset-0 z-10" />
       {children}
@@ -33,11 +33,11 @@ export function HeroSection({ children }: PropsWithChildren) {
             <strong className="font-extrabold text-[#248B3B]">SolarCells</strong> pour chaque installation réalisée.
           </p>
 
-          <div className="mt-[34px] flex flex-wrap gap-[25px]">
-            <Button className="w-[232px]" onClick={() => navigate('/onboarding/personal')}>
+          <div className="mt-[34px] flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-[25px]">
+            <Button className="w-full sm:w-[232px]" onClick={() => navigate('/onboarding/personal')}>
               {user ? 'Modifier mes informations' : 'Rejoindre le programme'}
             </Button>
-            <Button variant="secondary" className="w-[178px] gap-[10px]">
+            <Button variant="secondary" className="w-full gap-[10px] sm:w-[178px]">
               <Icon name="play" className="h-[21px] w-[21px] text-[#0B8A3A]" strokeWidth={2.3} />
               Voir la vidéo
             </Button>

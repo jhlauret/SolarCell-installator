@@ -34,7 +34,7 @@ export function TrainingStep({ goNext }: { goNext: () => void }) {
         <h2 className="section-title">Formations obligatoires</h2>
         <div className="mt-[16px] overflow-hidden rounded-[9px] border border-ink-200 bg-white shadow-card">
           {courses.map((course, index) => (
-            <div key={course.title} className={`grid grid-cols-[78px_1fr_245px] items-center px-[14px] py-[14px] ${index !== 0 ? 'border-t border-ink-200' : ''}`}>
+            <div key={course.title} className={`grid grid-cols-1 gap-3 px-[14px] py-[14px] sm:grid-cols-[56px_1fr_auto] sm:items-center sm:gap-4 lg:grid-cols-[78px_1fr_245px] ${index !== 0 ? 'border-t border-ink-200' : ''}`}>
               <IconBadge icon={course.icon} size="md" />
               <div>
                 <h3 className="text-[15px] font-black">{course.title}</h3>
@@ -49,7 +49,7 @@ export function TrainingStep({ goNext }: { goNext: () => void }) {
       <section>
         <h2 className="section-title">Ressources complémentaires</h2>
         <p className="mt-2 text-[13px] text-ink-700">Accédez à des guides et documents utiles.</p>
-        <div className="mt-[12px] grid grid-cols-3 gap-[16px]">
+        <div className="mt-[12px] grid grid-cols-1 gap-[12px] sm:grid-cols-3 sm:gap-[16px]">
           {resources.map((resource) => (
             <button key={resource.title} className="flex items-center justify-between rounded-[7px] border border-ink-200 bg-white px-[14px] py-[11px] text-left shadow-card transition hover:border-solar-500 hover:bg-solar-50">
               <span className="flex items-center gap-3">
@@ -81,7 +81,7 @@ export function TrainingStep({ goNext }: { goNext: () => void }) {
 
 function CourseStatus({ progress, done }: { progress: number; done?: boolean }) {
   return (
-    <div className="border-l border-ink-200 pl-[48px]">
+    <div className="sm:border-l sm:border-ink-200 sm:pl-[24px] lg:pl-[48px]">
       {done ? (
         <div className="flex items-center gap-4">
           <span className="grid h-[29px] w-[29px] place-items-center rounded-full bg-solar-500 text-white"><Check size={18} /></span>

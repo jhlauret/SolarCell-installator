@@ -62,6 +62,8 @@ export const trainingModules: TrainingModule[] = [
     id: 'zendure-4000-pro',
     courseKey: 'solar.training.zendure_4000_pro',
     route: '/programme/modules/zendure-4000-pro',
+    // Le bouton « Accéder au cours » du Module 3 redirige vers le syllabus Odoo (Odoo Learning).
+    externalUrl: 'https://odoo.82.165.111.126.sslip.io/slides/module-3-installation-du-zendure-solarflow-4000-pro-1',
     label: 'Module 3',
     title: 'L’installation du Zendure 4000 Pro',
     description:

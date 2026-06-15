@@ -74,7 +74,7 @@ function DocumentBlock({
           const docType = slugify(doc.title);
           const uploaded = uploads[docType];
           return (
-            <div key={doc.title} className={`grid grid-cols-[72px_1fr_210px] items-center gap-[4px] px-[16px] py-[16px] ${index !== 0 ? 'border-t border-ink-200' : ''}`}>
+            <div key={doc.title} className={`grid grid-cols-1 gap-3 px-[16px] py-[16px] sm:grid-cols-[56px_1fr_auto] sm:items-center sm:gap-4 lg:grid-cols-[72px_1fr_210px] lg:gap-[4px] ${index !== 0 ? 'border-t border-ink-200' : ''}`}>
               <IconBadge icon={doc.icon} size="md" />
               <div>
                 <h3 className="text-[16px] font-black">{doc.title} <span className="text-ink-500">ⓘ</span></h3>
