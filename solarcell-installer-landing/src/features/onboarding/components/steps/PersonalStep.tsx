@@ -65,14 +65,14 @@ export function PersonalStep({ goNext, initialData }: Props) {
     <div className="space-y-[28px]">
       <section>
         <h2 className="section-title">Identité</h2>
-        <div className="mt-[22px] grid grid-cols-6 gap-x-[20px] gap-y-[20px]">
-          <FieldShell label="Prénom" className="col-span-2">
+        <div className="mt-[22px] grid grid-cols-1 gap-x-[20px] gap-y-[20px] sm:grid-cols-2 lg:grid-cols-6">
+          <FieldShell label="Prénom" className="col-span-1 lg:col-span-2">
             <TextField value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Votre prénom" />
           </FieldShell>
-          <FieldShell label="Nom" className="col-span-2">
+          <FieldShell label="Nom" className="col-span-1 lg:col-span-2">
             <TextField value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Votre nom" />
           </FieldShell>
-          <FieldShell label="Date de naissance" className="col-span-2">
+          <FieldShell label="Date de naissance" className="col-span-1 sm:col-span-2 lg:col-span-2">
             <input
               type="date"
               value={birthDate}
@@ -80,7 +80,7 @@ export function PersonalStep({ goNext, initialData }: Props) {
               className="input-base w-full"
             />
           </FieldShell>
-          <FieldShell label="Pays de naissance" className="col-span-3">
+          <FieldShell label="Pays de naissance" className="col-span-1 sm:col-span-2 lg:col-span-3">
             <SelectField value={birthCountry} onChange={e => setBirthCountry(e.target.value)}>
               <option value="" disabled>Sélectionnez votre pays</option>
               <option>France</option>
@@ -88,7 +88,7 @@ export function PersonalStep({ goNext, initialData }: Props) {
               <option>Madagascar</option>
             </SelectField>
           </FieldShell>
-          <FieldShell label="Nationalité" className="col-span-3">
+          <FieldShell label="Nationalité" className="col-span-1 sm:col-span-2 lg:col-span-3">
             <SelectField value={nationality} onChange={e => setNationality(e.target.value)}>
               <option value="" disabled>Sélectionnez votre nationalité</option>
               <option>Française</option>
@@ -101,23 +101,23 @@ export function PersonalStep({ goNext, initialData }: Props) {
 
       <section>
         <h2 className="section-title">Coordonnées</h2>
-        <div className="mt-[18px] grid grid-cols-6 gap-x-[20px] gap-y-[18px]">
-          <FieldShell label="Adresse e-mail" className="col-span-3">
+        <div className="mt-[18px] grid grid-cols-1 gap-x-[20px] gap-y-[18px] sm:grid-cols-2 lg:grid-cols-6">
+          <FieldShell label="Adresse e-mail" className="col-span-1 sm:col-span-1 lg:col-span-3">
             <TextField value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="exemple@email.com" />
           </FieldShell>
-          <FieldShell label="Numéro de téléphone" className="col-span-3">
+          <FieldShell label="Numéro de téléphone" className="col-span-1 sm:col-span-1 lg:col-span-3">
             <TextField value={phone} onChange={e => setPhone(e.target.value)} placeholder="🇫🇷   +33 6 12 34 56 78" />
           </FieldShell>
-          <FieldShell label="Adresse" className="col-span-6">
+          <FieldShell label="Adresse" className="col-span-1 sm:col-span-2 lg:col-span-6">
             <TextField value={address} onChange={e => setAddress(e.target.value)} placeholder="Numéro et nom de rue" />
           </FieldShell>
-          <FieldShell label="Code postal" className="col-span-2">
+          <FieldShell label="Code postal" className="col-span-1 lg:col-span-2">
             <TextField value={zip} onChange={e => setZip(e.target.value)} placeholder="Code postal" />
           </FieldShell>
-          <FieldShell label="Ville" className="col-span-2">
+          <FieldShell label="Ville" className="col-span-1 lg:col-span-2">
             <TextField value={city} onChange={e => setCity(e.target.value)} placeholder="Votre ville" />
           </FieldShell>
-          <FieldShell label="Pays" className="col-span-2">
+          <FieldShell label="Pays" className="col-span-1 sm:col-span-2 lg:col-span-2">
             <SelectField value={country} onChange={e => setCountry(e.target.value)}>
               <option value="" disabled>Sélectionnez votre pays</option>
               <option>France</option>
@@ -130,7 +130,7 @@ export function PersonalStep({ goNext, initialData }: Props) {
 
       <section>
         <h2 className="section-title">Préférences</h2>
-        <div className="mt-[18px] grid grid-cols-2 gap-x-[20px]">
+        <div className="mt-[18px] grid grid-cols-1 gap-x-[20px] gap-y-[18px] sm:grid-cols-2">
           <FieldShell label="Langue préférée">
             <div className="relative">
               <SelectField value={preferredLang} onChange={e => setPreferredLang(e.target.value)} className="pl-12">

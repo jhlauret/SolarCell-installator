@@ -59,7 +59,7 @@ export function SkillsStep({ goNext, initialData }: Props) {
       <section>
         <h2 className="section-title">Domaines de compétences</h2>
         <p className="mt-2 text-[13px] text-ink-700">Sélectionnez les domaines dans lesquels vous avez de l'expérience.</p>
-        <div className="mt-[16px] grid grid-cols-4 gap-[18px]">
+        <div className="mt-[16px] grid grid-cols-1 gap-[12px] sm:grid-cols-2 lg:grid-cols-4">
           {SKILL_DEFS.map((skill) => {
             const isSelected = selected.has(skill.domain);
             return (
@@ -84,8 +84,8 @@ export function SkillsStep({ goNext, initialData }: Props) {
         <section>
           <h2 className="section-title">Niveau d'expertise</h2>
           <p className="mt-2 text-[13px] text-ink-700">Indiquez votre niveau pour chaque domaine sélectionné.</p>
-          <div className="mt-[16px] overflow-hidden rounded-[7px] border border-ink-200 bg-white">
-            <table className="w-full border-collapse text-[12px]">
+          <div className="mt-[16px] overflow-x-auto rounded-[7px] border border-ink-200 bg-white">
+            <table className="w-full min-w-[480px] border-collapse text-[12px]">
               <thead>
                 <tr className="h-[38px] text-ink-900">
                   <th className="w-[46px]" />
@@ -116,7 +116,7 @@ export function SkillsStep({ goNext, initialData }: Props) {
 
       <section>
         <h2 className="section-title">Expérience professionnelle</h2>
-        <div className="mt-[16px] grid grid-cols-2 gap-[20px]">
+        <div className="mt-[16px] grid grid-cols-1 gap-[14px] sm:grid-cols-2">
           <FieldShell label="Années d'expérience">
             <SelectField value={yearsExp} onChange={e => setYearsExp(e.target.value)} defaultValue="">
               <option value="" disabled>Sélectionnez votre expérience</option>

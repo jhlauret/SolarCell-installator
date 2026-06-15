@@ -10,7 +10,7 @@ export function TrainingProgramPage() {
       <div className="border-b border-ink-100">
         <SiteHeader />
       </div>
-      <main className="mx-auto max-w-[1540px] px-8 py-7">
+      <main className="mx-auto max-w-[1540px] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
         <HeroSection />
         <section className="mt-6 space-y-4" aria-label="Modules de formation SolarCell">
           {trainingModules.map((module) => (

@@ -156,7 +156,7 @@ export function InstallerLoginModal() {
         aria-hidden="true"
       />
 
-      <div className="relative w-full max-w-[420px] overflow-hidden rounded-[20px] bg-white shadow-[0_30px_80px_rgba(6,20,30,0.35)]">
+      <div className="relative max-h-[90vh] w-full max-w-[420px] overflow-y-auto overflow-x-hidden rounded-[20px] bg-white shadow-[0_30px_80px_rgba(6,20,30,0.35)]">
         <div className="h-[6px] w-full bg-gradient-to-r from-[#1FB36A] via-[#37C97E] to-[#39D0E0]" />
 
         <div className="px-7 pb-7 pt-6">

@@ -39,7 +39,7 @@ export function ModuleCard({ module }: { module: TrainingModule }) {
   };
 
   return (
-    <article className="grid gap-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[132px_1.2fr_1.25fr_150px_132px_180px] lg:items-center">
+    <article className="grid grid-cols-1 gap-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[132px_1.2fr_1.25fr_150px_132px_180px] lg:items-center">
       <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-solar-50 text-solar-600">
         <Icon className="h-24 w-24" strokeWidth={1.7} />
       </div>
@@ -59,7 +59,7 @@ export function ModuleCard({ module }: { module: TrainingModule }) {
         ))}
       </ul>
 
-      <div className="space-y-3 border-l border-slate-200 pl-6 text-sm font-semibold text-slate-600">
+      <div className="space-y-3 text-sm font-semibold text-slate-600 lg:border-l lg:border-slate-200 lg:pl-6">
         <p className="flex items-center gap-3"><Clock3 className="h-4 w-4" /> {module.duration}</p>
         <p className="flex items-center gap-3"><PlaySquare className="h-4 w-4" /> {module.videos} vidéos</p>
         <p className="flex items-center gap-3"><FileText className="h-4 w-4" /> {module.resources} ressources</p>

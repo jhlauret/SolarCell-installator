@@ -30,7 +30,7 @@ export function WalletStep({ goNext, initialData }: Props) {
     <div className="space-y-[26px]">
       <section>
         <h2 className="section-title">1. Choisissez votre méthode</h2>
-        <div className="mt-[18px] grid grid-cols-2 gap-[20px]">
+        <div className="mt-[18px] grid grid-cols-1 gap-[14px] sm:grid-cols-2">
           <button
             onClick={() => setWalletType('integrated')}
             className={`flex min-h-[143px] items-center gap-[24px] rounded-[9px] border px-[24px] text-left shadow-card ${walletType === 'integrated' ? 'border-solar-500 bg-greenSoft' : 'border-ink-200 bg-white'}`}
@@ -71,7 +71,7 @@ export function WalletStep({ goNext, initialData }: Props) {
               <p className="mt-1 text-[12px] leading-[1.45] text-ink-700">Votre wallet sera protégé par un chiffrement avancé. Conservez précieusement votre phrase de récupération.</p>
             </div>
           </div>
-          <div className="grid grid-cols-3 px-[14px] py-[20px] text-center">
+          <div className="grid grid-cols-1 gap-6 px-[14px] py-[20px] text-center sm:grid-cols-3 sm:gap-0">
             <WalletCreationStage number="1" icon={LockKeyhole} title="Création du wallet" body="Nous générons votre wallet SolarCell de manière sécurisée." />
             <WalletCreationStage number="2" icon={ListChecks} title="Phrase de récupération" body="Notez votre phrase de récupération de 12 mots et conservez-la dans un lieu sûr." withBorder />
             <WalletCreationStage number="3" icon={Check} title="Confirmation" body="Confirmez votre phrase pour activer votre wallet et commencer à recevoir vos SolarCells." withBorder />
@@ -110,7 +110,7 @@ export function WalletStep({ goNext, initialData }: Props) {
 function WalletCreationStage({ number, icon, title, body, withBorder = false }: { number: string; icon: ComponentType<LucideProps>; title: string; body: string; withBorder?: boolean }) {
   const Icon = icon;
   return (
-    <div className={`relative px-[28px] py-[8px] ${withBorder ? 'border-l border-ink-200' : ''}`}>
+    <div className={`relative px-[28px] py-[8px] ${withBorder ? 'sm:border-l sm:border-ink-200' : ''}`}>
       <span className="absolute left-1/2 top-[-2px] grid h-[24px] w-[24px] -translate-x-1/2 place-items-center rounded-full bg-solar-500 text-[12px] font-black text-white">{number}</span>
       <IconBadge icon={Icon} size="md" className="mx-auto mt-[20px]" />
       <h3 className="mt-[18px] text-[14px] font-black">{title}</h3>

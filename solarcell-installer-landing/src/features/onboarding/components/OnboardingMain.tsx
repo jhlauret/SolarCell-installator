@@ -25,9 +25,9 @@ export function OnboardingMain({ currentStep, previousStep, nextStep, goNext, go
   const { prefill } = useOnboardingPrefill(user?.applicationId ?? undefined);
 
   return (
-    <main className="px-[40px] py-[28px]">
+    <main className="px-5 py-6 sm:px-8 lg:px-[40px] lg:py-[28px]">
       <section className="max-w-[770px]">
-        <h1 className="text-[36px] font-black leading-[1.1] tracking-[-0.045em] text-ink-900">{currentStep.title}</h1>
+        <h1 className="text-[26px] font-black leading-[1.1] tracking-[-0.045em] text-ink-900 sm:text-[30px] lg:text-[36px]">{currentStep.title}</h1>
         <p className="mt-[14px] max-w-[760px] whitespace-pre-line text-[15px] leading-[1.55] text-ink-700">{currentStep.description}</p>
         <div className="mt-[24px]">
           <StepRenderer stepId={currentStep.id} goNext={goNext} prefill={prefill} />

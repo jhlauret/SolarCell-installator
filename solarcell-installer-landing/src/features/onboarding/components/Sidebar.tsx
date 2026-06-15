@@ -16,11 +16,11 @@ export function Sidebar({ steps, currentStep, onStepClick }: SidebarProps) {
   const progress = Math.round((currentStep.index / steps.length) * 100);
 
   return (
-    <aside className="border-r border-ink-200 bg-white/82 px-[38px] pb-8 pt-[28px]">
+    <aside className="border-b border-ink-200 bg-white/82 px-5 pb-8 pt-[28px] lg:border-b-0 lg:border-r lg:px-[38px]">
       <div>
         <h2 className="text-[18px] font-black tracking-[-0.02em]">Votre inscription</h2>
         <p className="mt-2 text-[14px] text-ink-700">Étape {currentStep.index} sur 7</p>
-        <ProgressBar value={progress} className="mt-[14px] w-[235px]" />
+        <ProgressBar value={progress} className="mt-[14px] w-full max-w-[235px]" />
       </div>
 
       <ol className="mt-[40px] space-y-0">

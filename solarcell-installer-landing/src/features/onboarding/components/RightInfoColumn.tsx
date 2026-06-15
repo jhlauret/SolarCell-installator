@@ -8,7 +8,7 @@ export function RightInfoColumn({ currentStep }: { currentStep: OnboardingStep }
   const panels = rightPanels[currentStep.id];
 
   return (
-    <aside className="px-[28px] py-[28px]">
+    <aside className="px-5 py-6 lg:px-[28px] lg:py-[28px]">
       <div className="space-y-[26px]">
         <MainInfoCard panel={panels.main} />
         {panels.secure && <SecurityCard title={panels.secure.title} body={panels.secure.body} cta={panels.secure.cta} />}
