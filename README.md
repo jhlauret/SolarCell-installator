@@ -2,6 +2,10 @@
 
 **Une webapp d'onboarding en 7 étapes pour les installateurs solaires** — modulaire, sécurisée, prête pour la production.
 
+<img width="2442" height="1502" alt="Capture d’écran 2026-06-23 à 18 18 25" src="https://github.com/user-attachments/assets/6daf2bbf-0459-4f8a-adb1-780826226c3e" />
+
+https://solarcell-installator-rd.82.165.111.126.sslip.io/
+
 ## 🏗️ Architecture
 
 Monorepo **deux-parties** (BFF + SPA React) — zéro dépendance Firebase côté client, sécurité maximale.
